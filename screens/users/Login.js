@@ -15,9 +15,9 @@ import {
 } from 'react-native';
 
 import tw from 'tailwind-react-native-classnames';
-import Error from "../../Context/store/Error";
+import Error from '../../Context/store/Error';
 
-import AuthGlobal from "../../Context/store/AuthGlobal";
+import AuthGlobal from '../../Context/store/AuthGlobal';
 import {loginUser} from '../../Context/actions/Auth.actions';
 
 const Login = ({navigation}) => {
@@ -28,11 +28,6 @@ const Login = ({navigation}) => {
   setTimeout(() => {
     setError('');
   }, 9000);
-  useEffect(() => {
-    if (context.stateUser.isAuthenticated === true) {
-     navigation.navigate('User Profile');
-    }
-  }, [context.stateUser.isAuthenticated]);
 
   const handleSubmit = () => {
     const user = {
@@ -46,6 +41,11 @@ const Login = ({navigation}) => {
       loginUser(user, context.dispatch);
     }
   };
+  useEffect(() => {
+    if (context.stateUser.isAuthenticated === true) {
+     return navigation.navigate('User Profile');
+    }
+  }, []);
   return (
     <ScrollView style={tw`bg-white`}>
       <View style={tw`mt-12  items-center`}>

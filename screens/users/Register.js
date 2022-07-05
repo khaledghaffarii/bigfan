@@ -6,22 +6,25 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  Picker,
   useColorScheme,
   TextInput,
   View,
   Button,
   Image,
   TouchableOpacity,
-  Dimensions,
+  Dimensions,Modal
 } from 'react-native';
+
 import Icon from 'react-native-vector-icons/FontAwesome';
 import tw from 'tailwind-react-native-classnames';
 import Error from '../../Context/store/Error';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import baseURL from '../../assets/common/baseUrl';
-import * as ImagePicker from 'react-native-image-picker';
+import {launchCamera} from 'react-native-image-picker';
 import mime from 'mime';
+//import ImagePicker from 'react-native-image-picker';
 const Register = props => {
   const [email, setEmail] = useState('');
   const [passwordHash, setPassword] = useState('');
@@ -29,12 +32,16 @@ const Register = props => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [image, setImage] = useState('');
+  const [typeImage, setTypeImage] = useState('');
+  const [nameImage, setNameImage] = useState('');
   const [phone, setPhone] = useState(0);
   const [country, setCountry] = useState('');
   const [user, setUser] = useState([]);
   const [error, setError] = useState('');
   const [errorStatus, setErrorStatus] = useState(['']);
   var {width} = Dimensions.get('window');
+  const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [selectedValue, setSelectedValue] = useState('java');
   setTimeout(() => {
     setError('');
   }, 9000);
@@ -72,63 +79,103 @@ const Register = props => {
       );
     }
   }
-  const launchCamera = () => {
-    let options = {
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-    ImagePicker.launchCamera(options, response => {
-      console.log('Response1 = ', response);
-
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-        alert(response.customButton);
-      } else {
-        const source = response.assets[0].uri;
-        console.log('responseSource', JSON.stringify(source));
-
-        if (response.assets[0].uri) {
-          setImage(response.assets[0].uri);
-        }
-      }
-    });
+  const options = {
+    title: 'select image',
+    type: 'library',
+    options: {
+      skipBackup: true,
+      path: 'image/jpg',
+      maxWidth: 200,
+      maxHeight: 200,
+      //cropping: true,
+      includeBase64: false,
+    },
   };
-  const launchImageLibrary = async () => {
-    const options = {
-      storageOptions: {
-        skipBackup: true,
-        path: '',
-      },
-    };
-    await ImagePicker.launchImageLibrary(options, response => {
-      console.log('Response1 = ', response);
+  const openGallery = async () => {
+    const image = await launchCamera(options);
+    console.log(image);
+    if (image.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (image.error) {
+      console.log('ImagePicker Error: ', image.error);
+    } else if (image.customButton) {
+      console.log('User tapped custom button: ', image.customButton);
+      alert(image.customButton);
+    } else {
+      const source = { uri: 'data:image/jpeg;base64,' + image.data };
+      console.log('imageSource', JSON.stringify(source));
 
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-        alert(response.customButton);
-      } else {
-        const source = response.assets[0].uri;
-        console.log('responseSource', JSON.stringify(source));
-
-        if (response.assets[0].uri) {
-          setImage(response.assets[0].uri);
-        }
+      if (image.assets[0].uri) {
+        setImage(image.assets[0].uri);
       }
-    });
+    
   };
-  const Register = () => {
-    const newImageUri = 'file:///' + image.split('file:/').join('');
-    console.log('🚀 ~ file: Register.js ~ line 131 ~ Register ~ image', image);
+  };
+
+  // const launchCamera = () => {
+  //   let options = {
+  //     storageOptions: {
+  //       skipBackup: true,
+  //       path: 'image/jpg',
+  //       width: 300,
+  //       height: 400,
+  //       cropping: true,
+
+  //     },
+  //     includeBase64: true,
+  //   };
+  //   ImagePicker.launchCamera(options, response => {
+  //     console.log('Response1 = ', response);
+
+  //     if (response.didCancel) {
+  //       console.log('User cancelled image picker');
+  //     } else if (response.error) {
+  //       console.log('ImagePicker Error: ', response.error);
+  //     } else if (response.customButton) {
+  //       console.log('User tapped custom button: ', response.customButton);
+  //       alert(response.customButton);
+  //     } else {
+  //       const source = response.assets[0].uri;
+  //       console.log('responseSource', JSON.stringify(source));
+
+  //       if (response.assets[0].uri) {
+  //         setImage(response.assets[0].uri);
+  //       }
+  //     }
+  //   });
+  // };
+  // const launchImageLibrary = async () => {
+  //   const options = {
+  //     storageOptions: {
+  //       skipBackup: true,
+  //       path: '',
+  //     },
+  //   };
+  //   await ImagePicker.launchImageLibrary(options, response => {
+  //     console.log('Response1 = ', response);
+
+  //     if (response.didCancel) {
+  //       console.log('User cancelled image picker');
+  //     } else if (response.error) {
+  //       console.log('ImagePicker Error: ', response.error);
+  //     } else if (response.customButton) {
+  //       console.log('User tapped custom button: ', response.customButton);
+  //       alert(response.customButton);
+  //     } else {
+  //       const source = response.assets[0].uri;
+  //       console.log(
+  //         '🚀 ~ file: Register.js ~ line 123 ~ launchImageLibrary ~ response.assets[0].uri',
+  //         response.assets[0].uri.base64,
+  //       );
+  //       console.log('responseSource', JSON.stringify(source));
+
+  //       if (response.assets[0].uri) {
+  //         setImage(response.assets[0].uri.base64);
+  //       }
+  //     }
+  //   });
+  // };
+  const Register = async () => {
     try {
       if (
         email === '' ||
@@ -142,6 +189,22 @@ const Register = props => {
       ) {
         setError('Please fill in your credentials');
       } else {
+        const newImageUri = 'file:///' + image.split('file:/').join('');
+        const formData = new FormData();
+
+ 
+        formData.append("image", {
+          uri: newImageUri,
+          type: mime.getType(newImageUri),
+          name: newImageUri.split("/").pop()
+      });
+        formData.append('firstName', firstName);
+        formData.append('lastName', lastName);
+        formData.append('email', email);
+        formData.append('passwordHash', passwordHash);
+        formData.append('confPasswordHash', confPasswordHash);
+        formData.append('phone', phone);
+        formData.append('country', country);
         const user = {
           firstName: firstName,
           lastName: lastName,
@@ -150,20 +213,21 @@ const Register = props => {
           confPasswordHash: confPasswordHash,
           phone: phone,
           country: country,
-          image: {
-            uri: JSON.stringify(newImageUri),
-            type: mime.getType(newImageUri),
-            name: newImageUri.split('/').pop(),
-          },
+          // image: {
+          //   uri: JSON.stringify(newImageUri),
+          //   type: mime.getType(newImageUri),
+          //   name: newImageUri.split('/').pop(),
+          // },
+          image: image ,
         };
-
-        fetch(`${baseURL}users/register`, {
-          method: 'POST',
-          cache: 'no-cache',
-          headers: {'Content-Type': 'application/json; charset=utf-8'},
-          body: JSON.stringify(user),
+        console.log( JSON.stringify(user));
+        await fetch(`${baseURL}users/register`, {
+          method: 'post',
+          headers: {'Content-Type': 'miltipart/from-data'},
+          body: user,
         })
           .then(res => {
+          console.log("🚀 ~ file: Register.js ~ line 212 ~ Register ~ res", res)
             if (res.status == 200) {
               Toast.show({
                 topOffset: 60,
@@ -174,14 +238,7 @@ const Register = props => {
               setTimeout(() => {
                 props.navigation.navigate('Login');
               }, 500);
-            }
-            res.json().then(user => {
-              if (res.status !== 200) {
-                setErrorStatus(res.statusText);
-              }
-              //console.log(response);
-              //console.log('Success:', user);
-            });
+            } 5
           })
           .catch(error => {
             Toast.show({
@@ -190,12 +247,35 @@ const Register = props => {
               text1: 'Something went wrong',
               text2: 'Please try again',
             });
-            setTimeout(() => {
-              props.navigation.navigate('Register');
-            }, 5000);
+            console.log(error);
 
-            // console.log(error.statusText);
           });
+        // axios
+        //   .post(`${baseURL}users/register`,user)
+        //   .then(res => {
+        //     console.log('🚀 ~ file: Register.js ~ line 208 ~ .then ~ res', res);
+        //     if (res.status == 200 || res.status == 201) {
+        //       Toast.show({
+        //         topOffset: 60,
+        //         type: 'success',
+        //         text1: 'New Product added',
+        //         text2: '',
+        //       });
+        //       setTimeout(() => {
+        //         props.navigation.navigate('Products');
+        //       }, 500);
+        //     }
+        //   })
+
+        //   .catch(error => {
+        //     Toast.show({
+        //       topOffset: 60,
+        //       type: 'error',
+        //       text1: 'Something went wrong',
+        //       text2: 'Please try again',
+        //     });
+        //     console.log(error);
+        //   });
       }
     } catch (error) {
       console.log(error);
@@ -206,16 +286,20 @@ const Register = props => {
     <View style={tw`w-full h-full bg-white`}>
       <KeyboardAwareScrollView style={{width: width}}>
         <View style={tw`items-center m-12`}>
+          
           <View style={styles.imageContainer}>
             {renderFileData()}
+
             <TouchableOpacity
               onPress={() => {
-                launchCamera();
+                openGallery();
               }}
               style={styles.imagePicker}>
               <Icon style={{color: 'white'}} name="camera" />
             </TouchableOpacity>
           </View>
+         
+
           <TextInput
             style={tw`   w-80  text-gray-700 border-blue-500 border rounded-xl py-2 px-4  mb-8 mt-8   `}
             placeholder={'FirstName'}
@@ -322,6 +406,10 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 100,
     elevation: 20,
-  },
+  }, container: {
+    flex: 1,
+    paddingTop: 40,
+    alignItems: "center"
+  }
 });
 export default Register;

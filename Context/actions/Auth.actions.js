@@ -6,7 +6,7 @@ import baseURL from "../../assets/common/baseUrl"
 export const SET_CURRENT_USER = "SET_CURRENT_USER";
 
 export const loginUser = (user, dispatch) => {
-    fetch(`https://28e8-197-25-208-161.eu.ngrok.io/users/login`, {
+    fetch(`${baseURL}users/login`, {
         method: "POST",
         body: JSON.stringify(user),
         headers: {

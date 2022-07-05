@@ -18,12 +18,19 @@ target 'BigFan' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+  
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
 
   pod 'RNSketchCanvas', :path => '../node_modules/@terrylinla/react-native-sketch-canvas'
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
+  pod 'react-native-location', :path => '../node_modules/react-native-location'
+
+  pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
+
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
 
   target 'BigFanTests' do
     inherit! :complete

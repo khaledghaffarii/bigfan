@@ -4,6 +4,8 @@ import Login from '../screens/users/Login';
 import Register from '../screens/users/Register';
 import UserProfile from '../screens/users/UserProfile';
 import AuthGlobal from '../Context/store/AuthGlobal';
+import WhiteBoard from '../screens/drawing/WhiteBoard';
+import SplashScreen from '../screens/SplashScreen';
 const Stack = createStackNavigator();
 const MyStack = () =>{
   const context = useContext(AuthGlobal);
@@ -33,7 +35,20 @@ const MyStack = () =>{
           title: 'Create a New Account',
         }}
       />
-     
+      <Stack.Screen
+        name="WhiteBoard"
+        component={WhiteBoard}
+        options={{
+          headerShown: false,
+        }}
+      />
+       <Stack.Screen
+        name="Splash"
+        component={SplashScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }

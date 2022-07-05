@@ -82,8 +82,7 @@ project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
 ]
 
-apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
 /**
  * Set this to true to create two separate APKs instead of one:
  *   - An APK that only works on ARM devices
@@ -260,6 +259,9 @@ android {
 }
 
 dependencies {
+    implementation "com.google.android.gms:play-services-base:16.0.1"
+    implementation project(':react-native-fs')
+    implementation "com.google.android.gms:play-services-location:16.0.0"
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     //noinspection GradleDynamicVersion
