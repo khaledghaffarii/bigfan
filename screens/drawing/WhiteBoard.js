@@ -1,4 +1,4 @@
-import React, {useState, useRef, useContext, useEffect} from 'react';
+import React, {useState, useRef, useContext, useEffect, propTypes} from 'react';
 ///import React, { Component } from 'react';
 import Signature from 'react-native-canvas-signature';
 import {
@@ -9,12 +9,16 @@ import {
   Alert,
   Button,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import tw from 'tailwind-react-native-classnames';
 //import RNSketchCanvas from '@terrylinla/react-native-sketch-canvas';
 import AuthGlobal from '../../Context/store/AuthGlobal';
 
-import Geolocation from '@react-native-community/geolocation';
+import {WebView} from 'react-native-webview';
+import RecordCamera from './RecordCamera';
+import Location from './Location';
+import {ScrollView} from 'react-native-gesture-handler';
 const WhiteBoard = ({navigation}) => {
   const context = useContext(AuthGlobal);
   const ref = useRef();
@@ -25,40 +29,21 @@ const WhiteBoard = ({navigation}) => {
     latitude: 0,
     longitude: 0,
   });
+  const cameraRef = useRef(null);
   const handleConfirm = () => {
-    // console.log('end');
-    // const conf = ref.current.readSignature();
-    // console.log(conf);
     return setConfirm(true);
   };
   const clear = () => {
-    ref.current?.clearSignature?.()
-     setConfirm(false);
+    ref.current?.clearSignature?.();
+    setConfirm(false);
   };
   const handleOK = signature => {
     console.log(signature);
     onOK(signature);
   };
-  const getPosition = async () => {
-    await Geolocation.getCurrentPosition(
-      pos => {
-        const initialPosition = JSON.stringify(pos);
-        console.log(
-          '🚀 ~ file: WhiteBoard.js ~ line 24 ~ getPosition ~ initialPosition',
-          initialPosition,
-        );
 
-        setError('');
-        setPosition({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-        });
-      },
-      e => setError(e.message),
-    );
-  };
   return (
-    <View style={tw`bg-white h-full`}>
+    <ScrollView style={tw`bg-white `}>
       <View>
         <View style={tw`mt-12 w-full  items-center`}>
           <Signature
@@ -66,8 +51,6 @@ const WhiteBoard = ({navigation}) => {
             lineWidth={1}
             lineColor="black"
             canvasStyle={{
-              width:400, 
-              height:300,
               marginBottom: 10,
               borderWidth: 1,
               borderColor: 'grey',
@@ -76,11 +59,10 @@ const WhiteBoard = ({navigation}) => {
             autoClear={true}
             imageType={'image/svg+xml'}
           />
-          <Button
-            title="Clear"
-            onPress={(() =>clear() )}
-          />
-          <Button title="Confirm" onPress={handleConfirm} />
+          <View style={{flexDirection:'row',margin:20,alignItems:'center',padding:20}}>
+            <Button title="Clear" onPress={() => clear()} />
+            <Button title="Confirm" onPress={handleConfirm} />
+          </View>
           {confirm ? (
             <Image
               resizeMode={'contain'}
@@ -89,20 +71,34 @@ const WhiteBoard = ({navigation}) => {
             />
           ) : null}
         </View>
-        {/* <View>
-          <Button title="Get Current Position" onPress={getPosition} />
-          {error ? (
-            <Text>Error retrieving current position</Text>
-          ) : (
-            <>
-              <Text>Latitude: {position.latitude}</Text>
-              <Text>Longitude: {position.longitude}</Text>
-            </>
-          )}
-        </View> */}
       </View>
-    </View>
+      <RecordCamera />
+      {/* <Location/> */}
+    </ScrollView>
   );
 };
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    alignItems: 'center',
 
+    height: 500,
+  },
+  preview: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
+  capture: {
+    flex: 0,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    margin: 20,
+  },
+});
 export default WhiteBoard;

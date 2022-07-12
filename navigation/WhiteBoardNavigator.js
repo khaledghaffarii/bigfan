@@ -12,14 +12,14 @@ function MyStack({navigation}) {
   return (
     <Stack.Navigator>
       
-      {context.stateUser.isAuthenticated ? (
-        <Stack.Screen
-        name="WhiteBoard"
-        component={WhiteBoard}
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen
+      name="WhiteBoard"
+      component={WhiteBoard}
+      options={{
+        headerShown: false,
+      }}
+    />
+      {/* {context.stateUser.isAuthenticated ? (
       ) : (
         <Stack.Screen
           name="Login"
@@ -28,7 +28,7 @@ function MyStack({navigation}) {
             headerShown: false,
           }}
         />
-      )}
+      )} */}
     
     </Stack.Navigator>
   );

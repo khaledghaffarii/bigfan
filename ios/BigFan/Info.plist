@@ -81,5 +81,11 @@
 <key>NSLocationAlwaysUsageDescription</key>
 
 <string>This is the plist item for NSLocationAlwaysUsageDescription</string>
+<key>NSCameraUsageDescription</key>
+<string>Your message to user when the camera is accessed for the first time</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Your message to user when the microsphone is accessed for the first time</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>This app needs to get your location...</string>
 </dict>
 </plist>
