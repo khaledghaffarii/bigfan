@@ -55,7 +55,8 @@ const Main = () => {
             ),
           }}
         />
-        {context.stateUser.isAuthenticated ? (
+        {/* {context.stateUser.isAuthenticated ? (
+          ) : null} */}
           <Tab.Screen
             name="Library"
             component={LibraryUser}
@@ -66,7 +67,6 @@ const Main = () => {
               ),
             }}
           />
-        ) : null}
 
         <Tab.Screen
           name="User"

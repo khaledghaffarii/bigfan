@@ -4,6 +4,9 @@ import WhiteBoard from '../screens/drawing/WhiteBoard';
 import AuthGlobal from '../Context/store/AuthGlobal';
 import Login from '../screens/users/Login';
 import UserProfile from '../screens/users/UserProfile';
+import MainDrow from '../screens/drawing/MainDrow';
+
+import Display from '../screens/drawing/Display';
 const Stack = createStackNavigator();
 
 function MyStack({navigation}) {
@@ -11,12 +14,18 @@ function MyStack({navigation}) {
 
   return (
     <Stack.Navigator>
-      
       <Stack.Screen
-      name="WhiteBoard"
-      component={WhiteBoard}
+        name="WhiteBoard"
+        component={MainDrow}
+        options={{
+          headerShown: false,
+        }}
+      />   
+      <Stack.Screen
+      name="display"
+      component={Display}
       options={{
-        headerShown: false,
+        headerShown: true,title: ' ',
       }}
     />
       {/* {context.stateUser.isAuthenticated ? (
@@ -29,7 +38,6 @@ function MyStack({navigation}) {
           }}
         />
       )} */}
-    
     </Stack.Navigator>
   );
 }
