@@ -20,14 +20,14 @@ function MyStack({navigation}) {
         options={{
           headerShown: false,
         }}
-      />   
+      />
       <Stack.Screen
-      name="display"
-      component={Display}
-      options={{
-        headerShown: true,title: ' ',
-      }}
-    />
+        name="Display"
+        component={Display}
+        options={{
+          headerShown: false,
+        }}
+      />
       {/* {context.stateUser.isAuthenticated ? (
       ) : (
         <Stack.Screen

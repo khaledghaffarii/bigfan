@@ -14,65 +14,88 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Pressable,
+  Switch,
 } from 'react-native';
 import {Card} from 'react-native-elements';
 import VideoPlayer from 'react-native-video';
 import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
+import ToggleSwitch from 'toggle-switch-react-native';
+import AuthGlobal from '../../Context/store/AuthGlobal';
+import baseURL from '../../assets/common/baseUrl';
+import axios from 'axios';
 const Display = props => {
-  console.log(
-    '🚀 ~ file: Display.js ~ line 5 ~ Display ~ video',
-    JSON.stringify(props.route.params.uriVideo),
-  );
-  const uriVideo = props.route.params.uriVideo;
-  const uriImage = props.route.params.uriImage;
+  const [userId, setUserId] = useState(false);
+  const context = useContext(AuthGlobal);
+  // console.log(context.stateUser.user.userId);
+
   const [resUri, setResUri] = useState(0);
   const ref = useRef();
   const Camera = useRef(null);
   const navigation = useNavigation();
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        for (let i = 0; i < uriVideo.length; i++) {
-          const uri = uriVideo[i];
-          // console.log(
-          //   '🚀 ~ file: Display.js ~ line 27 ~ fetchData ~ uris',
-          //   uri,
-          // );
-          setResUri(uri);
-        }
-      } catch (error) {}
-    }
-    // async function callAPI() {
-    //   try {
-    //     await fetchData();
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    // }
-    fetchData();
-    // setImage(JSON.stringify('../../assets/profile.png'));
-  }, []);
-  const RenderVideo = () => {
-    return (
-      <View>
-        <VideoPlayer
-          source={{
-            uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-          }}
-          resizeMode="cover"
-          videoWidth={1600}
-          videoHeight={900}
-          thumbnail={{uri: 'https://i.picsum.photos/id/866/1600/900.jpg'}}
-          style={styles.backgroundVideo}
-        />
-      </View>
-    );
-  };
 
-  // console.log(uriVideo.uri.substr('file://'.length));
-  // console.log(uriVideo);
+  const uriVideo = props.route.params.uriVideo;
+  const uriImage = props.route.params.uriImage;
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  useEffect(() => {
+    if (context.stateUser.isAuthenticated) {
+      setUserId(context.stateUser.user.userId);
+    } else {
+      setUserId(null);
+    }
+  }, []);
+
+  const toggleSwitchButton = () => {
+    setIsEnabled(previousState => !previousState);
+  };
+  const addPost = () => {
+    const formData = new FormData();
+
+    formData.append('image', uriImage);
+    formData.append('video', uriVideo);
+    formData.append('visibility', isEnabled);
+    formData.append('user', userId);
+    const post ={
+      image: uriImage,
+      video: uriVideo,
+      visibility: isEnabled,
+      user: userId,
+    }
+    axios.post(`http://127.0.0.1:3000/api/v1/posts`,post).then(res => {
+        if (res.status == 200 || res.status == 201) {
+          setTimeout(() => {
+            props.navigation.navigate('Library');
+          }, 500);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+     // console.log(post)
+  };
   return (
     <View style={styles.container}>
+      <View
+        style={{
+          marginLeft: 270,
+          marginTop: 10,
+          flexDirection: 'row',
+          alignContent: 'space-around',
+        }}>
+        {isEnabled ? (
+          <Text style={{margin: 5, fontWeight: 'bold'}}> Public</Text>
+        ) : (
+          <Text style={{margin: 5, fontWeight: 'bold'}}> Private</Text>
+        )}
+        <Switch
+          onValueChange={toggleSwitchButton}
+          value={isEnabled}
+          ios_backgroundColor="red"
+          trackColor={{false: 'red', true: 'green'}}
+          thumbColor={isEnabled ? 'green' : 'red'}
+        />
+      </View>
       <Card containerStyle={{padding: 0}}>
         <Image
           resizeMode={'contain'}
@@ -80,14 +103,14 @@ const Display = props => {
           source={{uri: uriImage}}
         />
       </Card>
-      {uriVideo.uri ? (
+      {uriVideo ? (
         <Card containerStyle={{padding: 0}}>
           <VideoPlayer
             resizeMode="contain"
             videoWidth={1600}
             videoHeight={900}
             source={{
-              uri: uriVideo.uri.substr('file://'.length),
+              uri: uriVideo,
             }}
             controls={true}
             pictureInPicture={true}
@@ -96,9 +119,6 @@ const Display = props => {
           />
         </Card>
       ) : (
-        // <View style={styles.container}>
-        //   <ActivityIndicator size="large" color="#00ff00" />
-        // </View>
         <Card containerStyle={{padding: 0}}>
           <VideoPlayer
             source={{
@@ -113,6 +133,7 @@ const Display = props => {
           />
         </Card>
       )}
+
       <View
         style={{
           alignItems: 'center',
@@ -120,10 +141,7 @@ const Display = props => {
         }}>
         <Pressable
           onPress={() => {
-            navigation.navigate('Library', {
-              uriVideo: uriVideo,
-              uriImage: uriImage,
-            });
+            addPost();
           }}
           style={{
             height: 50,

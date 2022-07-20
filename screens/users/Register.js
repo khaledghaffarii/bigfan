@@ -13,7 +13,8 @@ import {
   Button,
   Image,
   TouchableOpacity,
-  Dimensions,Modal
+  Dimensions,
+  Modal,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -102,14 +103,13 @@ const Register = props => {
       console.log('User tapped custom button: ', image.customButton);
       alert(image.customButton);
     } else {
-      const source = { uri: 'data:image/jpeg;base64,' + image.data };
+      const source = {uri: 'data:image/jpeg;base64,' + image.data};
       console.log('imageSource', JSON.stringify(source));
 
       if (image.assets[0].uri) {
         setImage(image.assets[0].uri);
       }
-    
-  };
+    }
   };
 
   // const launchCamera = () => {
@@ -189,15 +189,12 @@ const Register = props => {
       ) {
         setError('Please fill in your credentials');
       } else {
-        const newImageUri = 'file:///' + image.split('file:/').join('');
+        const newImageUri = image.substr('file://'.length);
         const formData = new FormData();
 
- 
-        formData.append("image", {
+        formData.append('image', {
           uri: newImageUri,
-          type: mime.getType(newImageUri),
-          name: newImageUri.split("/").pop()
-      });
+        });
         formData.append('firstName', firstName);
         formData.append('lastName', lastName);
         formData.append('email', email);
@@ -218,16 +215,19 @@ const Register = props => {
           //   type: mime.getType(newImageUri),
           //   name: newImageUri.split('/').pop(),
           // },
-          image: image ,
+          image: image,
         };
-        console.log( JSON.stringify(user));
+        console.log(JSON.stringify(user));
         await fetch(`${baseURL}users/register`, {
           method: 'post',
           headers: {'Content-Type': 'miltipart/from-data'},
           body: user,
         })
           .then(res => {
-          console.log("🚀 ~ file: Register.js ~ line 212 ~ Register ~ res", res)
+            console.log(
+              '🚀 ~ file: Register.js ~ line 212 ~ Register ~ res',
+              res,
+            );
             if (res.status == 200) {
               Toast.show({
                 topOffset: 60,
@@ -238,7 +238,8 @@ const Register = props => {
               setTimeout(() => {
                 props.navigation.navigate('Login');
               }, 500);
-            } 5
+            }
+            5;
           })
           .catch(error => {
             Toast.show({
@@ -248,7 +249,6 @@ const Register = props => {
               text2: 'Please try again',
             });
             console.log(error);
-
           });
         // axios
         //   .post(`${baseURL}users/register`,user)
@@ -286,7 +286,6 @@ const Register = props => {
     <View style={tw`w-full h-full bg-white`}>
       <KeyboardAwareScrollView style={{width: width}}>
         <View style={tw`items-center m-12`}>
-          
           <View style={styles.imageContainer}>
             {renderFileData()}
 
@@ -298,7 +297,6 @@ const Register = props => {
               <Icon style={{color: 'white'}} name="camera" />
             </TouchableOpacity>
           </View>
-         
 
           <TextInput
             style={tw`   w-80  text-gray-700 border-blue-500 border rounded-xl py-2 px-4  mb-8 mt-8   `}
@@ -406,10 +404,11 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 100,
     elevation: 20,
-  }, container: {
+  },
+  container: {
     flex: 1,
     paddingTop: 40,
-    alignItems: "center"
-  }
+    alignItems: 'center',
+  },
 });
 export default Register;

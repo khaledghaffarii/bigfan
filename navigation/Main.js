@@ -61,7 +61,8 @@ const Main = () => {
             name="Library"
             component={LibraryUser}
             options={{
-              headerShown: false,
+              headerShown: true,
+              title: 'Library',
               tabBarIcon: ({color}) => (
                 <Icons name="photo-library" color={color} size={30} />
               ),

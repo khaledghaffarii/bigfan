@@ -25,6 +25,11 @@ const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  useEffect(() => {
+    if (context.stateUser.isAuthenticated === true) {
+      return navigation.navigate('User Profile');
+    }
+  }, []);
   setTimeout(() => {
     setError('');
   }, 9000);
@@ -41,11 +46,6 @@ const Login = ({navigation}) => {
       loginUser(user, context.dispatch);
     }
   };
-  useEffect(() => {
-    if (context.stateUser.isAuthenticated === true) {
-     return navigation.navigate('User Profile');
-    }
-  }, []);
   return (
     <ScrollView style={tw`bg-white`}>
       <View style={tw`mt-12  items-center`}>

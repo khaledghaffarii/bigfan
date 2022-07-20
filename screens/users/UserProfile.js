@@ -1,5 +1,5 @@
 import React, {useContext, useState, useCallback} from 'react';
-import {View, Text, ScrollView, Button, StyleSheet} from 'react-native';
+import {View, Text, ScrollView, Button, StyleSheet, Image} from 'react-native';
 //import { Container } from "native-base"
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -28,23 +28,27 @@ const UserProfile = ({navigation, props}) => {
       AsyncStorage.getItem('jwt')
         .then(res => {
           axios
-            .get(`${baseURL}users/${context.stateUser.user.userId}`, {
+            .get(`http://127.0.0.1:3000/api/v1/users/${context.stateUser.user.userId}`, {
               headers: {Authorization: `Bearer ${res}`},
             })
 
             .then(user => setUserProfile(user.data));
-        
         })
         .catch(error => console.log(error));
-        return () => {
-            setUserProfile();
-            
-        }
+      return () => {
+        setUserProfile();
+      };
     }, [context.stateUser.isAuthenticated]),
   );
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.subContainer}>
+        {/* <Image
+          resizeMode={'contain'}
+          style={{width: 335, height: 150}}
+          source={{uri: userProfile.image}}
+        /> */}
         <Text style={{fontSize: 30}}>
           {userProfile
             ? userProfile.firstName + ' ' + userProfile.lastName
@@ -76,6 +80,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor:'white'
   },
   subContainer: {
     alignItems: 'center',
