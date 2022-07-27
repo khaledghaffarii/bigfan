@@ -19,6 +19,7 @@ import UserNavigator from './UserNavigator';
 import WhiteBoardNavigator from './WhiteBoardNavigator';
 import AuthGlobal from '../Context/store/AuthGlobal';
 import LibraryUser from '../screens/users/LibraryUser';
+import LibraryNavigator from './LIbraryNvigator';
 const Tab = createBottomTabNavigator();
 const Main = () => {
   const context = useContext(AuthGlobal);
@@ -58,10 +59,10 @@ const Main = () => {
         {/* {context.stateUser.isAuthenticated ? (
           ) : null} */}
           <Tab.Screen
-            name="Library"
-            component={LibraryUser}
+            name="LibraryNavigator"
+            component={LibraryNavigator}
             options={{
-              headerShown: true,
+              headerShown: false,
               title: 'Library',
               tabBarIcon: ({color}) => (
                 <Icons name="photo-library" color={color} size={30} />

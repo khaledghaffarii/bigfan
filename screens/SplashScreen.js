@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Button,
+  ActivityIndicator,
 } from 'react-native';
 import tw from 'tailwind-react-native-classnames';
 import {useNavigation} from '@react-navigation/native';
@@ -16,12 +17,17 @@ const SplashScreen = ({}) => {
   const navigation = useNavigation();
   const navigationRef = createNavigationContainerRef();
   return (
-    <View style={tw`h-full w-full`}>
-      <View style={tw`m-24 items-center bg-white`}>
-        <Image
-          style={{resizeMode: 'stretch', height: 500, width: 250}}
-          source={require('../assets/logo2.png')}
-        />
+    <View style={tw`h-full w-full bg-black`}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          padding: 10,
+   
+        }}>
+        <ActivityIndicator size="200%" color="#fff" />
       </View>
       {/* <View style={tw`items-center`}>
         <TouchableOpacity

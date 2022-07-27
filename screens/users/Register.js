@@ -67,7 +67,7 @@ const Register = props => {
     // fetchData();
     // setImage(JSON.stringify('../../assets/profile.png'));
   }, []);
-  //console.log('imageuser :' + image);
+  // console.log('imageuser :' + image);
   function renderFileData() {
     if (image) {
       return <Image source={{uri: image}} style={styles.image} />;
@@ -89,7 +89,7 @@ const Register = props => {
       maxWidth: 200,
       maxHeight: 200,
       //cropping: true,
-      includeBase64: false,
+      includeBase64: true,
     },
   };
   const openGallery = async () => {
@@ -167,7 +167,7 @@ const Register = props => {
   //         '🚀 ~ file: Register.js ~ line 123 ~ launchImageLibrary ~ response.assets[0].uri',
   //         response.assets[0].uri.base64,
   //       );
-  //       console.log('responseSource', JSON.stringify(source));
+  //       console.log('responseSource', JSON.stringify(s.comource));
 
   //       if (response.assets[0].uri) {
   //         setImage(response.assets[0].uri.base64);
@@ -210,80 +210,75 @@ const Register = props => {
           confPasswordHash: confPasswordHash,
           phone: phone,
           country: country,
-          // image: {
-          //   uri: JSON.stringify(newImageUri),
-          //   type: mime.getType(newImageUri),
-          //   name: newImageUri.split('/').pop(),
-          // },
-          image: image,
+          image: image.substr('file://'.length),
         };
-        console.log(JSON.stringify(user));
-        await fetch(`${baseURL}users/register`, {
-          method: 'post',
-          headers: {'Content-Type': 'miltipart/from-data'},
-          body: user,
-        })
+       // console.log(JSON.stringify(user));
+
+        axios
+          .post(`http://51.38.98.98:3000/api/v1/users/register`, user)
           .then(res => {
-            console.log(
-              '🚀 ~ file: Register.js ~ line 212 ~ Register ~ res',
-              res,
-            );
+            //console.log('🚀 ~ file: Register.js ~ line 208 ~ .then ~ res', res);
             if (res.status == 200) {
+             // console.log(res.status )
               Toast.show({
                 topOffset: 60,
-                type: 'success',
-                text1: 'Registration Succeeded',
-                text2: 'Please Login into your account',
+                type: "success",
+                text1: "Registration Succeeded",
+                text2: "Please Login into your account",
               });
               setTimeout(() => {
-                props.navigation.navigate('Login');
+                props.navigation.navigate("Login");
               }, 500);
             }
-            5;
           })
-          .catch(error => {
+          .catch((error) => {
             Toast.show({
               topOffset: 60,
-              type: 'error',
-              text1: 'Something went wrong',
-              text2: 'Please try again',
+              type: "error",
+              text1: "Something went wrong",
+              text2: "Please try again",
             });
-            console.log(error);
           });
-        // axios
-        //   .post(`${baseURL}users/register`,user)
-        //   .then(res => {
-        //     console.log('🚀 ~ file: Register.js ~ line 208 ~ .then ~ res', res);
-        //     if (res.status == 200 || res.status == 201) {
-        //       Toast.show({
-        //         topOffset: 60,
-        //         type: 'success',
-        //         text1: 'New Product added',
-        //         text2: '',
-        //       });
-        //       setTimeout(() => {
-        //         props.navigation.navigate('Products');
-        //       }, 500);
-        //     }
-        //   })
-
-        //   .catch(error => {
-        //     Toast.show({
-        //       topOffset: 60,
-        //       type: 'error',
-        //       text1: 'Something went wrong',
-        //       text2: 'Please try again',
-        //     });
-        //     console.log(error);
-        //   });
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  // console.log(errorStatus)
-  return (
-    <View style={tw`w-full h-full bg-white`}>
+    };
+    // console.log(errorStatus)
+    // await fetch(`${baseURL}users/register`, {
+    //   method: 'post',
+    //   headers: {'Content-Type': 'miltipart/from-data'},
+    //   body: user,
+    // })
+    //   .then(res => {
+    //     // console.log(
+    //     //   '🚀 ~ file: Register.js ~ line 212 ~ Register ~ res',
+    //     //   res,
+    //     // );
+    //     if (res.status == 200) {
+    //       Toast.show({
+    //         topOffset: 60,
+    //         type: 'success',
+    //         text1: 'Registration Succeeded',
+    //         text2: 'Please Login into your account',
+    //       });
+    //       setTimeout(() => {
+    //         props.navigation.navigate('Login');
+    //       }, 500);
+    //     }
+    //     5;
+    //   })
+    //   .catch(error => {
+    //     Toast.show({
+    //       topOffset: 60,
+    //       type: 'error',
+    //       text1: 'Something went wrong',
+    //       text2: 'Please try again',
+    //     });
+    //     console.log(error);
+    //   });
+    return (
+      <View style={tw`w-full h-full bg-white`}>
       <KeyboardAwareScrollView style={{width: width}}>
         <View style={tw`items-center m-12`}>
           <View style={styles.imageContainer}>
@@ -380,17 +375,17 @@ const Register = props => {
   );
 };
 const styles = StyleSheet.create({
-  imageContainer: {
-    width: 200,
-    height: 200,
-    borderStyle: 'solid',
-    borderWidth: 8,
-    padding: 0,
-    justifyContent: 'center',
-    borderRadius: 100,
-    borderColor: '#E0E0E0',
-    elevation: 10,
-  },
+    imageContainer: {
+      width: 200,
+      height: 200,
+      borderStyle: 'solid',
+      borderWidth: 8,
+      padding: 0,
+      justifyContent: 'center',
+      borderRadius: 100,
+      borderColor: '#E0E0E0',
+      elevation: 10,
+    },
   image: {
     width: '100%',
     height: '100%',

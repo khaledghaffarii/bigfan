@@ -4,7 +4,7 @@ import React, {
   useContext,
   useEffect,
   ActivityIndicator,
-  propTypes,
+  propTypes,useCallback
 } from 'react';
 import {
   StyleSheet,
@@ -27,16 +27,22 @@ import tw from 'tailwind-react-native-classnames';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const LibraryUser = props => {
+  const navigation = useNavigation();
   const [video, setvideo] = useState([]);
   const [image, setImage] = useState([]);
   const [visibility, setVisibility] = useState([]);
   const [library, setLibrary] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
+  
+  
   useEffect(() => {
     //http://10.0.2.2:3001/user/register
+  
     function fetchData() {
       axios
-        .get(`http://127.0.0.1:3000/api/v1/posts`)
+        .get(`http://51.38.98.98:3000/api/v1/posts`)
         .then(res => {
           const post = res.data;
           // console.log(post)
@@ -57,6 +63,7 @@ const LibraryUser = props => {
         .catch(error => {
           console.log(error);
         });
+       
     }
     async function callAPI() {
       try {
@@ -64,14 +71,19 @@ const LibraryUser = props => {
       } catch (e) {
         console.log(e);
       }
+    
     }
+ 
     callAPI();
-  }, [library]);
+    return ()=>{
+      forceUpdate()
+    }
+  }, []);
   //console.log('🚀 ~ file: LibraryUser.js ~ line 69 ~ library', library);
 
   return (
     <View style={tw`h-full bg-white`}>
-      <View style={{marginLeft: -12, marginBottom: 90}}>
+      <View style={{}}>
         <FlatList
           data={library}
           numColumns={2}
@@ -79,23 +91,37 @@ const LibraryUser = props => {
           style={tw`pl-4`}
           renderItem={({item}) => (
             <TouchableOpacity
-              onPress={() => setModalOpen(true)}
+              onPress={() =>
+                navigation.navigate('LibraryDetails', {
+                  video: item.video,
+                  image: item.image,
+                })
+              }
               style={tw`p-2 pl-6 pb-8 pt-4 bg-white m-2 w-40`}>
               <View
                 style={{flexDirection: 'row', alignContent: 'space-between'}}>
-                <Card containerStyle={{padding: 0}}>
+                <View
+                  style={{
+                    padding: 0,
+                    borderBottomWidth: 1,
+                    borderColor: 'gray',
+                  }}>
                   <Image
                     style={{
                       resizeMode: 'contain',
-
-                      width: 96,
-                      height: 96,
+                      alignItems: 'center',
+                      width: 100,
+                      height: 80,
+                      top: 0,
+                      left: 30,
+                      right: 0,
+                      buttom: 0,
                     }}
                     source={{
                       uri: item.image,
                     }}
                   />
-                </Card>
+                </View>
                 {item.visibility ? (
                   <View style={{width: 15, marginTop: 12}}>
                     <Text
@@ -122,45 +148,6 @@ const LibraryUser = props => {
                   </View>
                 )}
               </View>
-              <Modal visible={modalOpen} animationType="slide">
-                <View style={styles.modalContent}>
-                  <TouchableOpacity
-                    onPress={() => setModalOpen(false)}
-                    style={{...styles.modalToggle, ...styles.modalClose}}>
-                    <MaterialIcons name="close" size={24} />
-                    <Text>close</Text>
-                  </TouchableOpacity>
-                  <Card containerStyle={{padding: 0,alignItems:'center'}}>
-                    <Image
-                      style={{
-                        resizeMode: 'contain',
-                        alignContent: 'center',
-                        width: 150,
-                        height: 150,animationType:"pulse"
-                      }}
-                      source={{
-                        uri: item.image,
-                      }}
-                    />
-                  </Card>
-                  <Card containerStyle={{padding: 0,alignItems:'center'}}>
-                    <VideoPlayer
-                     controls={true}
-                      resizeMode="contain"
-                      source={{
-                        uri: item.video,
-                      }}
-                      pictureInPicture={true}
-                      playWhenInactive={true}
-                      style={{
-                        position: 'relative',
-                        width: 250,
-                        height: 300,
-                      }}
-                    />
-                  </Card>
-                </View>
-              </Modal>
             </TouchableOpacity>
           )}
         />
@@ -181,7 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignSelf: 'center',
     flexDirection: 'row',
-    width: 200
+    width: 200,
   },
   modalClose: {
     marginTop: 20,
@@ -199,9 +186,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   backgroundVideo: {
-    position: 'relative',
-
-    width: 250,
+    width: 300,
     height: 300,
   },
 });

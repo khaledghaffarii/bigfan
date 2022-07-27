@@ -8,6 +8,7 @@ import MainDrow from '../screens/drawing/MainDrow';
 
 import Display from '../screens/drawing/Display';
 import LibraryDetails from '../screens/users/LibraryDetails';
+import LibraryUser from '../screens/users/LibraryUser';
 const Stack = createStackNavigator();
 
 function MyStack({navigation}) {
@@ -15,36 +16,18 @@ function MyStack({navigation}) {
 
   return (
     <Stack.Navigator>
-      
+      <Stack.Screen name="Library" component={LibraryUser} />
       <Stack.Screen
-        name="WhiteBoard"
-        component={MainDrow}
+        name="LibraryDetails"
+        component={LibraryDetails}
         options={{
-          headerShown: false,
+          headerShown: true,
         }}
       />
-      <Stack.Screen
-        name="Display"
-        component={Display}
-        options={{
-          headerShown: false,
-        }}
-      />
-    
-      {/* {context.stateUser.isAuthenticated ? (
-      ) : (
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            headerShown: false,
-          }}
-        />
-      )} */}
     </Stack.Navigator>
   );
 }
 
-export default function WhiteBoardNavigator() {
+export default function LibraryNavigator() {
   return <MyStack />;
 }

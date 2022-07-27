@@ -6,7 +6,7 @@ import baseURL from "../../assets/common/baseUrl"
 export const SET_CURRENT_USER = "SET_CURRENT_USER";
 
 export const loginUser = (user, dispatch) => {
-    fetch(`http://localhost:3000/api/v1/users/login`, {
+    fetch(`http://51.38.98.98:3000/api/v1/users/login`, {
         method: "POST",
         body: JSON.stringify(user),
         headers: {
@@ -17,6 +17,7 @@ export const loginUser = (user, dispatch) => {
     .then((res) => res.json())
     .then((data) => {
         if (data) {
+            console.log(data)
             const token = data.token;
             AsyncStorage.setItem("jwt", token)
             const decoded = jwt_decode(token)
@@ -26,19 +27,19 @@ export const loginUser = (user, dispatch) => {
         }
     })
     .catch((err) => {
-        // Toast.show({
-        //     topOffset: 60,
-        //     type: "error",
-        //     text1: "Please provide correct credentials",
-        //     text2: ""
-        // });
+        Toast.show({
+            topOffset: 60,
+            type: "error",
+            text1: "Please provide correct credentials",
+            text2: ""
+        });
         logoutUser(dispatch)
     });
 };
 
 export const getUserProfile = (userId) => {
 
-    fetch(`http://127.0.0.1:3000/api/v1/users/${userId}`, {
+    fetch(`http://51.38.98.98:3000/api/v1/users/${userId}`, {
         method: "GET",
         body: JSON.stringify(user),
         headers: {

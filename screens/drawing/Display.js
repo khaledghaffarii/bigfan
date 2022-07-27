@@ -15,6 +15,7 @@ import {
   SafeAreaView,
   Pressable,
   Switch,
+  Button,
 } from 'react-native';
 import {Card} from 'react-native-elements';
 import VideoPlayer from 'react-native-video';
@@ -33,46 +34,52 @@ const Display = props => {
   const ref = useRef();
   const Camera = useRef(null);
   const navigation = useNavigation();
-
+  const [test, setTest] = useState(false);
   const uriVideo = props.route.params.uriVideo;
   const uriImage = props.route.params.uriImage;
   const [isEnabled, setIsEnabled] = useState(false);
 
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   useEffect(() => {
+  
+    if (test) {
+    
+      props.navigation.navigate('WhiteBoard');
+    }
     if (context.stateUser.isAuthenticated) {
       setUserId(context.stateUser.user.userId);
     } else {
       setUserId(null);
     }
-  }, []);
+  }, [test]);
 
   const toggleSwitchButton = () => {
     setIsEnabled(previousState => !previousState);
   };
   const addPost = () => {
-    const formData = new FormData();
-
-    formData.append('image', uriImage);
-    formData.append('video', uriVideo);
-    formData.append('visibility', isEnabled);
-    formData.append('user', userId);
-    const post ={
+    const post = {
       image: uriImage,
       video: uriVideo,
       visibility: isEnabled,
       user: userId,
-    }
-    axios.post(`http://127.0.0.1:3000/api/v1/posts`,post).then(res => {
+    };
+    axios
+      .post(`http://51.38.98.98:3000/api/v1/posts`, post)
+      .then(res => {
         if (res.status == 200 || res.status == 201) {
           setTimeout(() => {
-            props.navigation.navigate('Library');
+            props.navigation.navigate('LibraryNavigator');
           }, 500);
         }
       })
       .catch(error => {
         console.log(error);
       });
-     // console.log(post)
+
+    setTest(true);
+    
+    // console.log(post)
   };
   return (
     <View style={styles.container}>
@@ -98,8 +105,13 @@ const Display = props => {
       </View>
       <Card containerStyle={{padding: 0}}>
         <Image
-          resizeMode={'contain'}
-          style={{width: 335, height: 150}}
+          resizeMode={'cover'}
+          style={{
+            width: 400,
+            height: 150,
+            alignItems: 'center',
+            marginLeft: 190,
+          }}
           source={{uri: uriImage}}
         />
       </Card>
@@ -116,50 +128,30 @@ const Display = props => {
             pictureInPicture={true}
             playWhenInactive={true}
             style={styles.backgroundVideo}
+            autoplay={false}
+            paused={true}
           />
         </Card>
       ) : (
         <Card containerStyle={{padding: 0}}>
-          <VideoPlayer
-            source={{
-              uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-            }}
-            resizeMode="cover"
-            videoWidth={1600}
-            videoHeight={900}
-            thumbnail={{uri: 'https://i.picsum.photos/id/866/1600/900.jpg'}}
-            style={styles.backgroundVideo}
-            controls={true}
-          />
+          <View>
+            <Text>No Video</Text>
+          </View>
         </Card>
       )}
 
       <View
         style={{
-          alignItems: 'center',
           marginTop: 70,
+          width: 200,
+          height: 50,
         }}>
-        <Pressable
+        <Button
           onPress={() => {
             addPost();
           }}
-          style={{
-            height: 50,
-            backgroundColor: 'green',
-            width: '100%',
-            borderRadius: 10,
-          }}>
-          <Text
-            style={{
-              color: 'white',
-              fontWeight: 'bold',
-              textAlign: 'center',
-              fontSize: 20,
-              margin: 10,
-            }}>
-            Save To Library
-          </Text>
-        </Pressable>
+          title="Send"
+        />
       </View>
     </View>
   );

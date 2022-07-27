@@ -8,8 +8,16 @@ import {
   Dimensions,
   Modal,
   TouchableOpacity,
+  Separator,
 } from 'react-native';
-import React, {useState, useRef, useContext, useEffect, propTypes} from 'react';
+import React, {
+  useState,
+  useRef,
+  useContext,
+  useEffect,
+  propTypes,
+  useCallback,
+} from 'react';
 import WhiteBoard from './WhiteBoard';
 import tw from 'tailwind-react-native-classnames';
 //import RecordCamera from './RecordCamera';
@@ -19,6 +27,9 @@ import {ScrollView} from 'react-native-gesture-handler';
 import AuthGlobal from '../../Context/store/AuthGlobal';
 import {RNCamera} from 'react-native-camera';
 import {json} from 'stream/consumers';
+import SignaturePad from 'react-native-signature-pad-v2';
+import {useFocusEffect} from '@react-navigation/native';
+import {Button} from 'react-native-elements';
 const MainDrow = ({navigation}) => {
   const window = Dimensions.get('window');
   const [uriVideo, setUriVideo] = useState(null);
@@ -34,23 +45,26 @@ const MainDrow = ({navigation}) => {
   const [recording, setRecording] = useState(true);
   const [start, setStart] = useState(true);
   const [test, setTest] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   useEffect(() => {
     if (test) {
+      forceUpdate()
+      setStart(true);
       navigation.navigate('Display', {
         uriVideo: uriVideo,
         uriImage: signature,
       });
     }
-    if (recording && Camera.current) {
-      FetchRecord();
-    }
-    setTimeout(() => {
-      setRecording(false);
-    }, 9000);
-  }, [uriVideo, signature, Camera.current]);
+
+    return () => {
+      setTest(false);
+    };
+  }, [uriVideo, signature]);
 
   async function FetchRecord() {
+    setStart(false);
     try {
       const uri = await Camera.current.recordAsync();
       console.log(uri['uri'].substr('file://'.length));
@@ -61,13 +75,20 @@ const MainDrow = ({navigation}) => {
   }
   const Stop = async () => {
     await Camera.current.stopRecording();
+
     setTest(true);
     // if(test){
     //   ref.current?.clearSignature?.();
     //   setTest(false);
     // }
   };
+  const SignaturePadError = error => {
+    console.error(error);
+  };
 
+  const SignaturePadChange = ({base64DataUrl}) => {
+    console.log('Got new signature: ' + base64DataUrl);
+  };
   const RenderCam = () => {
     return (
       <RNCamera
@@ -86,92 +107,90 @@ const MainDrow = ({navigation}) => {
       />
     );
   };
-  //console.log(uriVideo);
 
   return (
-    <View
-      style={{
-        width: windowWidth,
-        height: windowHeight,
-        backgroundColor: '#fff',
-      }}>
+    <View style={{flexDirection: 'column'}}>
       <View
         style={{
-          alignItems: 'center',
+          width: windowWidth,
+          height: windowHeight,
+          backgroundColor: '#fff',
         }}>
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'green',
-            width: 200,
-            borderRadius: 30,
-            marginTop:350
-          }}
-          onPress={() => setModalOpen(true)}>
-          <Text
-            style={{
-              color: 'white',
-              fontWeight: 'bold',
-              textAlign: 'center',
-              fontSize: 20,
-              margin: 10,
-            }}>
-            start
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <Modal visible={modalOpen} animationType="slide">
         <View>
-          <View style={tw`mt-0 items-center `}>
-            <Signature
-              ref={ref}
-              lineWidth={3}
-              lineColor="black"
-              canvasStyle={{
+          {!start ? (
+            <View
+              style={{
+                height: 350,
+                width: 800,
                 marginBottom: 0,
                 borderWidth: 2,
-                borderColor: 'grey',
-                height: 350,
-                width: 410,
-              }}
-              onChange={signature => setSignature(signature)}
-              autoClear={true}
-              imageType={'image/svg+xml'}
-            />
-          </View>
+                borderColor: 'black',
+                flexDirection: 'column',
+                backgroundColor: 'gray',
+                opacity: 0.1,
+              }}>
+              <SignaturePad
+                ref={ref}
+                onError={SignaturePadError}
+                onChange={signature => setSignature(signature.base64DataUrl)}
+                style={{borderColor: 'black'}}
+              />
+            </View>
+          ) : null}
 
           <View
             style={{
               alignItems: 'center',
+            }}>
+            {start ? (
+              <View
+                style={{
+                  width: 200,
+                  height: 50,
+                  borderRadius: 30,
+                  marginTop: 300,
+                }}>
+                <Button onPress={FetchRecord} title="start" />
+              </View>
+            ) : null}
+          </View>
+          <View
+            style={{
+              alignItems: 'center',
+              width: '100%',
+              height: '100%',
+              marginTop: 30,
+              opacity: start ? 0 : 1,
             }}>
             {RenderCam()}
-          </View>
-          <View
-            style={{
-              alignItems: 'center',
-              marginTop: 70,
-            }}>
-            <Pressable
-              onPress={() => Stop()}
+            <View
               style={{
-                height: 50,
-                backgroundColor: 'red',
-
-                borderRadius: 50,
+                alignItems: 'center',
+                marginTop: 30,
               }}>
-              <Text
+              <Pressable
+                onPress={() => Stop()}
                 style={{
-                  color: 'white',
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  fontSize: 20,
-                  margin: 10,
+                  height: 50,
+                  backgroundColor: 'red',
+
+                  borderRadius: 50,
                 }}>
-                Finish
-              </Text>
-            </Pressable>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    fontSize: 20,
+                    margin: 10,
+                  }}>
+                  Finish
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
-      </Modal>
+      </View>
     </View>
   );
 };
@@ -192,7 +211,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   preview: {
-    marginTop: 42,
+    margin: 15,
     width: 250,
     height: 250,
   },

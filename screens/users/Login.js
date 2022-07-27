@@ -12,6 +12,7 @@ import {
   Button,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 
 import tw from 'tailwind-react-native-classnames';
@@ -25,8 +26,11 @@ const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
+    setIsLoading(true);
     if (context.stateUser.isAuthenticated === true) {
+      setIsLoading(false);
       return navigation.navigate('User Profile');
     }
   }, []);
@@ -48,6 +52,7 @@ const Login = ({navigation}) => {
   };
   return (
     <ScrollView style={tw`bg-white`}>
+         
       <View style={tw`mt-12  items-center`}>
         <Image
           style={{resizeMode: 'stretch', height: 150, width: 100}}
@@ -76,6 +81,7 @@ const Login = ({navigation}) => {
           onChangeText={text => setPassword(text)}
         />
       </View>
+      {/* {isLoading && <ActivityIndicator color={"#fff"} />} */}
       {error ? <Error message={error} /> : null}
       <View style={tw`w-72  h-full  rounded-full m-12 my-5 `}>
         <TouchableOpacity

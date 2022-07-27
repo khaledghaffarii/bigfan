@@ -6,6 +6,7 @@ import UserProfile from '../screens/users/UserProfile';
 import AuthGlobal from '../Context/store/AuthGlobal';
 import WhiteBoard from '../screens/drawing/WhiteBoard';
 import SplashScreen from '../screens/SplashScreen';
+import LibraryDetails from '../screens/users/LibraryDetails';
 const Stack = createStackNavigator();
 const MyStack = () =>{
   const context = useContext(AuthGlobal);
@@ -48,7 +49,7 @@ const MyStack = () =>{
         options={{
           headerShown: false,
         }}
-      />
+      /> 
     </Stack.Navigator>
   );
 }
