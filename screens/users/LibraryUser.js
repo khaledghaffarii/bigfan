@@ -4,7 +4,8 @@ import React, {
   useContext,
   useEffect,
   ActivityIndicator,
-  propTypes,useCallback
+  propTypes,
+  useCallback,
 } from 'react';
 import {
   StyleSheet,
@@ -34,18 +35,15 @@ const LibraryUser = props => {
   const [library, setLibrary] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-  
-  
+  const forceUpdate = React.useCallback(() => updateState(Math.random()), []);
+  const [count, setCount] = useState(0);
+
   useEffect(() => {
-    //http://10.0.2.2:3001/user/register
-  
     function fetchData() {
       axios
-        .get(`http://51.38.98.98:3000/api/v1/posts`)
+        .get(`${baseURL}posts`)
         .then(res => {
           const post = res.data;
-          // console.log(post)
           setLibrary(post);
           var resultImage = post.map(function (posts) {
             return posts['image'];
@@ -63,7 +61,6 @@ const LibraryUser = props => {
         .catch(error => {
           console.log(error);
         });
-       
     }
     async function callAPI() {
       try {
@@ -71,13 +68,19 @@ const LibraryUser = props => {
       } catch (e) {
         console.log(e);
       }
-    
     }
- 
+    const incrementCount = () => {
+      // Update state with incremented value
+      for (let i = 0; i < count.length; i++) {
+        setCount(count + 1);
+      }
+    };
+
     callAPI();
-    return ()=>{
-      forceUpdate()
-    }
+    incrementCount();
+    return () => {
+      forceUpdate(count);
+    };
   }, []);
   //console.log('🚀 ~ file: LibraryUser.js ~ line 69 ~ library', library);
 
@@ -95,6 +98,7 @@ const LibraryUser = props => {
                 navigation.navigate('LibraryDetails', {
                   video: item.video,
                   image: item.image,
+                  text: item.text,
                 })
               }
               style={tw`p-2 pl-6 pb-8 pt-4 bg-white m-2 w-40`}>

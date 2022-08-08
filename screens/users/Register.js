@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Modal,
+  ToastAndroid,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -25,7 +26,10 @@ import axios from 'axios';
 import baseURL from '../../assets/common/baseUrl';
 import {launchCamera} from 'react-native-image-picker';
 import mime from 'mime';
-//import ImagePicker from 'react-native-image-picker';
+import * as ImagePicker from 'react-native-image-picker';
+import IconsPhoto from 'react-native-vector-icons/MaterialIcons';
+import Iconsgallery from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 const Register = props => {
   const [email, setEmail] = useState('');
   const [passwordHash, setPassword] = useState('');
@@ -43,6 +47,8 @@ const Register = props => {
   var {width} = Dimensions.get('window');
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const [selectedValue, setSelectedValue] = useState('java');
+  const [errorData, setErrorData] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
   setTimeout(() => {
     setError('');
   }, 9000);
@@ -89,10 +95,11 @@ const Register = props => {
       maxWidth: 200,
       maxHeight: 200,
       //cropping: true,
-      includeBase64: true,
     },
+    includeBase64: true,
   };
   const openGallery = async () => {
+    setModalVisible(!modalVisible)
     const image = await launchCamera(options);
     console.log(image);
     if (image.didCancel) {
@@ -103,10 +110,12 @@ const Register = props => {
       console.log('User tapped custom button: ', image.customButton);
       alert(image.customButton);
     } else {
-      const source = {uri: 'data:image/jpeg;base64,' + image.data};
+      const source = {uri: 'base64,' + image.data};
       console.log('imageSource', JSON.stringify(source));
 
       if (image.assets[0].uri) {
+        //console.log("🚀 ~ file: Register.js ~ line 112 ~ openGallery ~ image.assets[0]", image.assets[0])
+
         setImage(image.assets[0].uri);
       }
     }
@@ -144,37 +153,38 @@ const Register = props => {
   //     }
   //   });
   // };
-  // const launchImageLibrary = async () => {
-  //   const options = {
-  //     storageOptions: {
-  //       skipBackup: true,
-  //       path: '',
-  //     },
-  //   };
-  //   await ImagePicker.launchImageLibrary(options, response => {
-  //     console.log('Response1 = ', response);
+  const launchImageLibrary = async () => {
+    setModalVisible(!modalVisible)
+    const options = {
+      storageOptions: {
+        skipBackup: true,
+        path: '',
+      },
+    };
+    await ImagePicker.launchImageLibrary(options, response => {
+      console.log('Response1 = ', response);
 
-  //     if (response.didCancel) {
-  //       console.log('User cancelled image picker');
-  //     } else if (response.error) {
-  //       console.log('ImagePicker Error: ', response.error);
-  //     } else if (response.customButton) {
-  //       console.log('User tapped custom button: ', response.customButton);
-  //       alert(response.customButton);
-  //     } else {
-  //       const source = response.assets[0].uri;
-  //       console.log(
-  //         '🚀 ~ file: Register.js ~ line 123 ~ launchImageLibrary ~ response.assets[0].uri',
-  //         response.assets[0].uri.base64,
-  //       );
-  //       console.log('responseSource', JSON.stringify(s.comource));
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+        alert(response.customButton);
+      } else {
+        const source = response.assets[0].uri;
+        console.log(
+          '🚀 ~ file: Register.js ~ line 123 ~ launchImageLibrary ~ response.assets[0].uri',
+          response.assets[0].uri.base64,
+        );
+        console.log('responseSource', JSON.stringify(source.comource));
 
-  //       if (response.assets[0].uri) {
-  //         setImage(response.assets[0].uri.base64);
-  //       }
-  //     }
-  //   });
-  // };
+        if (response.assets[0].uri) {
+          setImage(response.assets[0].uri);
+        }
+      }
+    });
+  };
   const Register = async () => {
     try {
       if (
@@ -189,19 +199,19 @@ const Register = props => {
       ) {
         setError('Please fill in your credentials');
       } else {
-        const newImageUri = image.substr('file://'.length);
-        const formData = new FormData();
+        // const newImageUri = image.substr('file://'.length);
+        // const formData = new FormData();
 
-        formData.append('image', {
-          uri: newImageUri,
-        });
-        formData.append('firstName', firstName);
-        formData.append('lastName', lastName);
-        formData.append('email', email);
-        formData.append('passwordHash', passwordHash);
-        formData.append('confPasswordHash', confPasswordHash);
-        formData.append('phone', phone);
-        formData.append('country', country);
+        // formData.append('image', {
+        //   uri: newImageUri,
+        // });
+        // formData.append('firstName', firstName);
+        // formData.append('lastName', lastName);
+        // formData.append('email', email);
+        // formData.append('passwordHash', passwordHash);
+        // formData.append('confPasswordHash', confPasswordHash);
+        // formData.append('phone', phone);
+        // formData.append('country', country);
         const user = {
           firstName: firstName,
           lastName: lastName,
@@ -210,75 +220,75 @@ const Register = props => {
           confPasswordHash: confPasswordHash,
           phone: phone,
           country: country,
-          image: image.substr('file://'.length),
+          image: image,
         };
-       // console.log(JSON.stringify(user));
+        //console.log(JSON.stringify(user));
 
         axios
-          .post(`http://51.38.98.98:3000/api/v1/users/register`, user)
+          .post(`${baseURL}users/register`, user, {
+            headers: {'Content-Type': 'application/json'},
+          })
           .then(res => {
-            //console.log('🚀 ~ file: Register.js ~ line 208 ~ .then ~ res', res);
             if (res.status == 200) {
-             // console.log(res.status )
-              Toast.show({
-                topOffset: 60,
-                type: "success",
-                text1: "Registration Succeeded",
-                text2: "Please Login into your account",
-              });
+              ToastAndroid.showWithGravity(
+                'email sent verify yor email Address and please confirm',
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+              );
               setTimeout(() => {
-                props.navigation.navigate("Login");
+                props.navigation.navigate('Login');
               }, 500);
             }
           })
-          .catch((error) => {
-            Toast.show({
-              topOffset: 60,
-              type: "error",
-              text1: "Something went wrong",
-              text2: "Please try again",
-            });
+          .catch(error => {
+            ToastAndroid.showWithGravity(
+              JSON.stringify(errorData),
+              ToastAndroid.LONG,
+              ToastAndroid.BOTTOM,
+            );
+            console.log(error.response.data);
+            setErrorData(error.response.data);
           });
-        }
-      } catch (error) {
-        console.log(error);
       }
-    };
-    // console.log(errorStatus)
-    // await fetch(`${baseURL}users/register`, {
-    //   method: 'post',
-    //   headers: {'Content-Type': 'miltipart/from-data'},
-    //   body: user,
-    // })
-    //   .then(res => {
-    //     // console.log(
-    //     //   '🚀 ~ file: Register.js ~ line 212 ~ Register ~ res',
-    //     //   res,
-    //     // );
-    //     if (res.status == 200) {
-    //       Toast.show({
-    //         topOffset: 60,
-    //         type: 'success',
-    //         text1: 'Registration Succeeded',
-    //         text2: 'Please Login into your account',
-    //       });
-    //       setTimeout(() => {
-    //         props.navigation.navigate('Login');
-    //       }, 500);
-    //     }
-    //     5;
-    //   })
-    //   .catch(error => {
-    //     Toast.show({
-    //       topOffset: 60,
-    //       type: 'error',
-    //       text1: 'Something went wrong',
-    //       text2: 'Please try again',
-    //     });
-    //     console.log(error);
-    //   });
-    return (
-      <View style={tw`w-full h-full bg-white`}>
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // console.log(errorStatus)
+  // await fetch(`${baseURL}users/register`, {
+  //   method: 'post',
+  //   headers: {'Content-Type': 'miltipart/from-data'},
+  //   body: user,
+  // })
+  //   .then(res => {
+  //     // console.log(
+  //     //   '🚀 ~ file: Register.js ~ line 212 ~ Register ~ res',
+  //     //   res,
+  //     // );
+  //     if (res.status == 200) {
+  //       Toast.show({
+  //         topOffset: 60,
+  //         type: 'success',
+  //         text1: 'Registration Succeeded',
+  //         text2: 'Please Login into your account',
+  //       });
+  //       setTimeout(() => {
+  //         props.navigation.navigate('Login');
+  //       }, 500);
+  //     }
+  //     5;
+  //   })
+  //   .catch(error => {
+  //     Toast.show({
+  //       topOffset: 60,
+  //       type: 'error',
+  //       text1: 'Something went wrong',
+  //       text2: 'Please try again',
+  //     });
+  //     console.log(error);
+  //   });
+  return (
+    <View style={tw`w-full h-full bg-white`}>
       <KeyboardAwareScrollView style={{width: width}}>
         <View style={tw`items-center m-12`}>
           <View style={styles.imageContainer}>
@@ -286,13 +296,74 @@ const Register = props => {
 
             <TouchableOpacity
               onPress={() => {
-                openGallery();
+                setModalVisible(true);
               }}
               style={styles.imagePicker}>
               <Icon style={{color: 'white'}} name="camera" />
             </TouchableOpacity>
           </View>
-
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                Alert.alert('Modal has been closed.');
+                setModalVisible(!modalVisible);
+              }}>
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(!modalVisible)}
+                    style={{...styles.modalToggle, ...styles.modalClose}}>
+                    <MaterialIcons name="close" size={24} />
+                  </TouchableOpacity>
+                  <View
+                    style={{
+                      flexDirection: 'column',
+                      justifyContent: 'space-around',
+                      width: 200,
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        width: 200,
+                      }}>
+                      <TouchableOpacity onPress={() => openGallery(true)}>
+                        <Text
+                          style={tw`text-blue-500 w-full font-bold text-center mt-8 text-lg`}>
+                          Take Photo
+                        </Text>
+                      </TouchableOpacity>
+                      <IconsPhoto
+                        name="add-a-photo"
+                        size={18}
+                        style={tw` mt-10 text-blue-900 ml-5`}
+                      />
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                      }}>
+                      <TouchableOpacity onPress={() => launchImageLibrary()}>
+                        <Text
+                          style={tw`text-blue-500 w-full font-bold text-center mt-8 text-lg`}>
+                          Choose from Library
+                        </Text>
+                      </TouchableOpacity>
+                      {/* <Iconsgallery
+                        name="photo"
+                        size={18}
+                        style={tw` mt-10 text-red-500 ml-5`}
+                      /> */}
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+          </View>
           <TextInput
             style={tw`   w-80  text-gray-700 border-blue-500 border rounded-xl py-2 px-4  mb-8 mt-8   `}
             placeholder={'FirstName'}
@@ -361,8 +432,11 @@ const Register = props => {
           />
         </View>
         {error ? <Error message={error} /> : null}
+        {errorData ? <Error message={errorData} /> : null}
+
         <View style={tw`  h-full  rounded-full m-12  my-5 mb-12`}>
           <TouchableOpacity
+         
             onPress={() => {
               Register();
             }}
@@ -375,17 +449,17 @@ const Register = props => {
   );
 };
 const styles = StyleSheet.create({
-    imageContainer: {
-      width: 200,
-      height: 200,
-      borderStyle: 'solid',
-      borderWidth: 8,
-      padding: 0,
-      justifyContent: 'center',
-      borderRadius: 100,
-      borderColor: '#E0E0E0',
-      elevation: 10,
-    },
+  imageContainer: {
+    width: 200,
+    height: 200,
+    borderStyle: 'solid',
+    borderWidth: 8,
+    padding: 0,
+    justifyContent: 'center',
+    borderRadius: 100,
+    borderColor: '#E0E0E0',
+    elevation: 10,
+  },
   image: {
     width: '100%',
     height: '100%',
@@ -404,6 +478,53 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
     alignItems: 'center',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  modalToggle: {
+    alignItems: 'flex-end',
+    marginTop: -25,
+    width: 200,
+    marginRight: -60,
+  },
+  modalClose: {
+    marginBottom: 0,
   },
 });
 export default Register;

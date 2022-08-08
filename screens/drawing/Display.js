@@ -16,6 +16,8 @@ import {
   Pressable,
   Switch,
   Button,
+  TextInput,
+  ScrollView,
 } from 'react-native';
 import {Card} from 'react-native-elements';
 import VideoPlayer from 'react-native-video';
@@ -25,6 +27,7 @@ import ToggleSwitch from 'toggle-switch-react-native';
 import AuthGlobal from '../../Context/store/AuthGlobal';
 import baseURL from '../../assets/common/baseUrl';
 import axios from 'axios';
+// import {ScrollView} from 'react-native-gesture-handler';
 const Display = props => {
   const [userId, setUserId] = useState(false);
   const context = useContext(AuthGlobal);
@@ -38,13 +41,11 @@ const Display = props => {
   const uriVideo = props.route.params.uriVideo;
   const uriImage = props.route.params.uriImage;
   const [isEnabled, setIsEnabled] = useState(false);
-
+  const [text, setText] = useState('hello');
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
   useEffect(() => {
-  
     if (test) {
-    
       props.navigation.navigate('WhiteBoard');
     }
     if (context.stateUser.isAuthenticated) {
@@ -63,24 +64,27 @@ const Display = props => {
       video: uriVideo,
       visibility: isEnabled,
       user: userId,
+      text: text,
     };
     axios
-      .post(`http://51.38.98.98:3000/api/v1/posts`, post)
+      .post(`${baseURL}posts`, post)
       .then(res => {
         if (res.status == 200 || res.status == 201) {
           setTimeout(() => {
-            props.navigation.navigate('LibraryNavigator');
+            props.navigation.navigate('User');
           }, 500);
         }
       })
       .catch(error => {
         console.log(error);
       });
+    setTimeout(() => {
+      setTest(true);
+    }, 100);
 
-    setTest(true);
-    
-    // console.log(post)
+    //console.log(text);
   };
+  //console.log(userId)
   return (
     <View style={styles.container}>
       <View
@@ -103,56 +107,68 @@ const Display = props => {
           thumbColor={isEnabled ? 'green' : 'red'}
         />
       </View>
-      <Card containerStyle={{padding: 0}}>
-        <Image
-          resizeMode={'cover'}
+      <ScrollView style={{margin: 1, width: '100%'}}>
+        <View
           style={{
-            width: 400,
-            height: 150,
-            alignItems: 'center',
-            marginLeft: 190,
-          }}
-          source={{uri: uriImage}}
-        />
-      </Card>
-      {uriVideo ? (
-        <Card containerStyle={{padding: 0}}>
-          <VideoPlayer
-            resizeMode="contain"
-            videoWidth={1600}
-            videoHeight={900}
-            source={{
-              uri: uriVideo,
+            width: '100%',
+          }}>
+          <TextInput
+            numberOfLines={5}
+            placeholder="what do you mean"
+            onChangeText={text => setText(text)}
+            // value={this.state.text}
+            style={{borderWidth: 1, borderColor: 'gray', margin: 10}}
+          />
+        </View>
+        <Card containerStyle={{padding: 0, width: '93%'}}>
+          <Image
+            resizeMode={'center'}
+            style={{
+              width: '70%',
+              height: 150,
+              alignItems: 'center',
+              marginLeft: 100,
             }}
-            controls={true}
-            pictureInPicture={true}
-            playWhenInactive={true}
-            style={styles.backgroundVideo}
-            autoplay={false}
-            paused={true}
+            source={{uri: uriImage}}
           />
         </Card>
-      ) : (
-        <Card containerStyle={{padding: 0}}>
-          <View>
-            <Text>No Video</Text>
-          </View>
-        </Card>
-      )}
-
-      <View
-        style={{
-          marginTop: 70,
-          width: 200,
-          height: 50,
-        }}>
-        <Button
-          onPress={() => {
-            addPost();
-          }}
-          title="Send"
-        />
-      </View>
+        {uriVideo ? (
+          <Card containerStyle={{padding: 0}}>
+            <VideoPlayer
+              resizeMode="contain"
+              source={{
+                uri: uriVideo,
+              }}
+             // controls={true}
+              pictureInPicture={true}
+              playWhenInactive={true}
+              style={styles.backgroundVideo}
+              autoplay={false}
+              paused={false}
+              repeat={true}
+            />
+          </Card>
+        ) : (
+          <Card containerStyle={{padding: 0}}>
+            <View>
+              <Text>No Video</Text>
+            </View>
+          </Card>
+        )}
+        <View
+          style={{
+            marginLeft: 100,
+            marginTop: 20,
+            width: '50%',
+          }}>
+          <Button
+            onPress={() => {
+              addPost();
+            }}
+            title="Send"
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -169,9 +185,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   backgroundVideo: {
-    position: 'relative',
-
-    width: 250,
+    width: '100%',
     height: 300,
   },
 });

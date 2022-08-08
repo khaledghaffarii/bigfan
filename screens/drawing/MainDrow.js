@@ -9,6 +9,7 @@ import {
   Modal,
   TouchableOpacity,
   Separator,
+  ScrollView,
 } from 'react-native';
 import React, {
   useState,
@@ -23,13 +24,17 @@ import tw from 'tailwind-react-native-classnames';
 //import RecordCamera from './RecordCamera';
 import Signature from 'react-native-canvas-signature';
 import Location from './Location';
-import {ScrollView} from 'react-native-gesture-handler';
+//import {ScrollView} from 'react-native-gesture-handler';
 import AuthGlobal from '../../Context/store/AuthGlobal';
 import {RNCamera} from 'react-native-camera';
 import {json} from 'stream/consumers';
 import SignaturePad from 'react-native-signature-pad-v2';
 import {useFocusEffect} from '@react-navigation/native';
 import {Button} from 'react-native-elements';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 const MainDrow = ({navigation}) => {
   const window = Dimensions.get('window');
   const [uriVideo, setUriVideo] = useState(null);
@@ -50,7 +55,7 @@ const MainDrow = ({navigation}) => {
   const forceUpdate = React.useCallback(() => updateState({}), []);
   useEffect(() => {
     if (test) {
-      forceUpdate()
+      forceUpdate();
       setStart(true);
       navigation.navigate('Display', {
         uriVideo: uriVideo,
@@ -109,7 +114,8 @@ const MainDrow = ({navigation}) => {
   };
 
   return (
-    <View style={{flexDirection: 'column'}}>
+    <View
+      style={{flexDirection: 'column' ,flex:1}}>
       <View
         style={{
           width: windowWidth,
@@ -120,8 +126,8 @@ const MainDrow = ({navigation}) => {
           {!start ? (
             <View
               style={{
-                height: 350,
-                width: 800,
+                height: hp('40%'),
+                width: wp('100%'),
                 marginBottom: 0,
                 borderWidth: 2,
                 borderColor: 'black',
@@ -154,41 +160,43 @@ const MainDrow = ({navigation}) => {
               </View>
             ) : null}
           </View>
-          <View
-            style={{
-              alignItems: 'center',
-              width: '100%',
-              height: '100%',
-              marginTop: 30,
-              opacity: start ? 0 : 1,
-            }}>
-            {RenderCam()}
+          <ScrollView>
             <View
               style={{
                 alignItems: 'center',
+                width: windowWidth,
+                height: windowHeight,
                 marginTop: 30,
+                opacity: start ? 0 : 1,
               }}>
-              <Pressable
-                onPress={() => Stop()}
+              {RenderCam()}
+              <View
                 style={{
-                  height: 50,
-                  backgroundColor: 'red',
-
-                  borderRadius: 50,
+                  alignItems: 'center',
+                  marginTop: 30,
                 }}>
-                <Text
+                <Pressable
+                  onPress={() => Stop()}
                   style={{
-                    color: 'white',
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                    fontSize: 20,
-                    margin: 10,
+                    height: 50,
+                    backgroundColor: 'red',
+
+                    borderRadius: 50,
                   }}>
-                  Finish
-                </Text>
-              </Pressable>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      fontSize: 20,
+                      margin: 10,
+                    }}>
+                    Finish
+                  </Text>
+                </Pressable>
+              </View>
             </View>
-          </View>
+          </ScrollView>
         </View>
       </View>
     </View>

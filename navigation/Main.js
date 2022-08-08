@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState, useCallback, useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -11,19 +11,31 @@ import {
   Text,
   useColorScheme,
   View,
+  Image,
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
 // Stacks
+import baseURL from '../assets/common/baseUrl';
 import HomeNavigator from './HomeNavigator';
 import UserNavigator from './UserNavigator';
 import WhiteBoardNavigator from './WhiteBoardNavigator';
 import AuthGlobal from '../Context/store/AuthGlobal';
 import LibraryUser from '../screens/users/LibraryUser';
 import LibraryNavigator from './LIbraryNvigator';
+import axios from 'axios';
 const Tab = createBottomTabNavigator();
 const Main = () => {
   const context = useContext(AuthGlobal);
   console.log(context.stateUser.isAuthenticated);
+  const [userProfile, setUserProfile] = useState('');
+  useEffect(() => {
+    if (context.stateUser.user.userId) {
+      axios
+        .get(`${baseURL}users/${context.stateUser.user.userId}`)
+        .then(user => setUserProfile(user.data));
+    }
+  }, [context.stateUser.user.userId]);
+  //console.log(context.stateUser.user.userId);
   return (
     <>
       <Tab.Navigator
@@ -46,6 +58,7 @@ const Main = () => {
             ),
           }}
         />
+        
         <Tab.Screen
           name="WhiteBoardNavigator"
           component={WhiteBoardNavigator}
@@ -56,30 +69,40 @@ const Main = () => {
             ),
           }}
         />
-        {/* {context.stateUser.isAuthenticated ? (
-          ) : null} */}
+     
+        {context.stateUser.isAuthenticated  ? (
           <Tab.Screen
-            name="LibraryNavigator"
-            component={LibraryNavigator}
+            name="User"
+            component={UserNavigator}
             options={{
               headerShown: false,
-              title: 'Library',
               tabBarIcon: ({color}) => (
-                <Icons name="photo-library" color={color} size={30} />
+                <View>
+                  <Image
+                    source={{uri: userProfile.image}}
+                    style={{
+                      resizeMode: 'center',
+                      width: 40,
+                      height: 40,
+                      borderRadius: 300,
+                    }}
+                  />
+                </View>
               ),
             }}
           />
-
-        <Tab.Screen
-          name="User"
-          component={UserNavigator}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color}) => (
-              <Icon name="user" color={color} size={30} />
-            ),
-          }}
-        />
+        ) : (
+          <Tab.Screen
+            name="User"
+            component={UserNavigator}
+            options={{
+              headerShown: false,
+              tabBarIcon: ({color}) => (
+                <Icon name="user" color={color} size={30} />
+              ),
+            }}
+          />
+        )}
       </Tab.Navigator>
     </>
   );

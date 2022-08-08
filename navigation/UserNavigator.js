@@ -50,6 +50,13 @@ const MyStack = () =>{
           headerShown: false,
         }}
       /> 
+       <Stack.Screen
+        name="LibraryDetails"
+        component={LibraryDetails}
+        options={{
+          headerShown: true,
+        }}
+      />
     </Stack.Navigator>
   );
 }

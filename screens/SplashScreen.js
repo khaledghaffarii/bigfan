@@ -17,7 +17,7 @@ const SplashScreen = ({}) => {
   const navigation = useNavigation();
   const navigationRef = createNavigationContainerRef();
   return (
-    <View style={tw`h-full w-full bg-black`}>
+    <View style={tw`h-full w-full bg-white`}>
       <View
         style={{
           flex: 1,
@@ -27,7 +27,7 @@ const SplashScreen = ({}) => {
           padding: 10,
    
         }}>
-        <ActivityIndicator size="200%" color="#fff" />
+        <ActivityIndicator size="200%" color="#1E90FF" />
       </View>
       {/* <View style={tw`items-center`}>
         <TouchableOpacity
