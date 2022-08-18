@@ -114,8 +114,7 @@ const MainDrow = ({navigation}) => {
   };
 
   return (
-    <View
-      style={{flexDirection: 'column' ,flex:1}}>
+    <View style={{flexDirection: 'column', flex: 1}}>
       <View
         style={{
           width: windowWidth,
@@ -143,7 +142,6 @@ const MainDrow = ({navigation}) => {
               />
             </View>
           ) : null}
-
           <View
             style={{
               alignItems: 'center',
@@ -164,39 +162,41 @@ const MainDrow = ({navigation}) => {
             <View
               style={{
                 alignItems: 'center',
-                width: windowWidth,
-                height: windowHeight,
-                marginTop: 30,
+
                 opacity: start ? 0 : 1,
               }}>
               {RenderCam()}
-              <View
-                style={{
-                  alignItems: 'center',
-                  marginTop: 30,
-                }}>
-                <Pressable
-                  onPress={() => Stop()}
-                  style={{
-                    height: 50,
-                    backgroundColor: 'red',
-
-                    borderRadius: 50,
-                  }}>
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      fontSize: 20,
-                      margin: 10,
-                    }}>
-                    Finish
-                  </Text>
-                </Pressable>
-              </View>
             </View>
           </ScrollView>
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              margin: 15
+            }}>
+            <Pressable
+              onPress={() => Stop()}
+              style={{
+                height: 50,
+             
+                width: wp(40),
+                opacity: start ? 0 : 1,
+                borderRadius: 50,     borderRadius: 24,
+                backgroundColor: '#001F2D',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  fontSize: 20,
+                  margin: 10,
+                }}>
+                Finish
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </View>
@@ -220,7 +220,8 @@ const styles = StyleSheet.create({
   },
   preview: {
     margin: 15,
-    width: 250,
-    height: 250,
+
+    width: wp(100),
+    height: hp('30%'),
   },
 });

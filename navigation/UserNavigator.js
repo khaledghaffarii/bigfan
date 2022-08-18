@@ -25,6 +25,7 @@ const MyStack = () =>{
       component={UserProfile}
       options={{
         headerShown: false,
+        title:' '
       }}
     />}
       <Stack.Screen
@@ -54,7 +55,7 @@ const MyStack = () =>{
         name="LibraryDetails"
         component={LibraryDetails}
         options={{
-          headerShown: true,
+          headerShown: true,  title:' '
         }}
       />
     </Stack.Navigator>

@@ -1,6 +1,7 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import Home from '../screens/Home';
+import UserDetails from '../screens/UserDetails';
 
 const Stack = createStackNavigator();
 
@@ -14,6 +15,15 @@ function MyStack() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="User_Details"
+        component={UserDetails}
+        options={{
+          headerShown: true,
+          title:' '
+        }}
+      />
+
     </Stack.Navigator>
   );
 }

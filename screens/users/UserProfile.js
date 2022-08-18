@@ -26,6 +26,10 @@ import IconsLogout from 'react-native-vector-icons/MaterialIcons';
 import LibraryUser from './LibraryUser';
 import {FlatList} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 const UserProfile = ({navigation, props}) => {
   const context = useContext(AuthGlobal);
   const [userProfile, setUserProfile] = useState();
@@ -89,7 +93,7 @@ const UserProfile = ({navigation, props}) => {
         <View style={styles.headerColumn}>
           {userProfile ? (
             <View style={styles.imageContainer}>
-              <Image source={{uri:   userProfile.image}} style={styles.image} />
+              <Image source={{uri: userProfile.image}} style={styles.image} />
             </View>
           ) : (
             <View style={styles.imageContainer}>
@@ -99,7 +103,8 @@ const UserProfile = ({navigation, props}) => {
               />
             </View>
           )}
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View
+            style={{flexDirection: 'row', alignItems: 'center', width: wp(65)}}>
             <Text style={styles.userNameText}>
               {userProfile
                 ? userProfile.firstName + ' ' + userProfile.lastName
@@ -108,8 +113,8 @@ const UserProfile = ({navigation, props}) => {
             <IconsLogout
               name="logout"
               size={30}
-              style={tw`-mr-20 ml-10`}
-              onPress={() =>{
+              style={{}}
+              onPress={() => {
                 setModalVisible(true);
               }}
             />
@@ -134,7 +139,7 @@ const UserProfile = ({navigation, props}) => {
         <View style={styles.container}>
           <View style={styles.separator} />
         </View>
-        <View style={styles.containerTel}>
+        {/* <View style={styles.containerTel}>
           <View style={styles.iconRow}>
             <Icon
               name="call"
@@ -166,60 +171,8 @@ const UserProfile = ({navigation, props}) => {
               </Text>
             </View>
           </View>
-        </View>
+        </View> */}
       </View>
-      <View style={styles.centeredView}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setModalVisible(!modalVisible);
-          }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(!modalVisible)}
-                style={{...styles.modalToggle, ...styles.modalClose}}>
-                <MaterialIcons name="close" size={24} />
-              </TouchableOpacity>
-              <Text style={{color:"black",fontSize:18 ,marginTop:15}}>
-                Are you sure you want to logout ?
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: "space-around",
-                  width: 200,
-                }}>
-               
-                  <TouchableOpacity
-                    onPress={() => setModalVisible(!modalVisible)}>
-                    <Text
-                      style={tw`text-blue-500 w-full font-bold text-center mt-8 text-lg`}>
-                      No
-                    </Text>
-                  </TouchableOpacity>
-            
-               
-                  <TouchableOpacity
-                    onPress={() => [
-                      AsyncStorage.removeItem('jwt'),
-                      logoutUser(context.dispatch),
-                    ]}>
-                    <Text
-                      style={tw`text-blue-500 w-full font-bold text-center mt-8 text-lg`}>
-                      yes
-                    </Text>
-                  </TouchableOpacity>
-               
-              </View>
-            </View>
-          </View>
-        </Modal>
-      </View>
-
       {loading ? (
         <View
           style={{
@@ -306,6 +259,54 @@ const UserProfile = ({navigation, props}) => {
           )}
         />
       )}
+      <View style={styles.centeredView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                onPress={() => setModalVisible(!modalVisible)}
+                style={{...styles.modalToggle, ...styles.modalClose}}>
+                <MaterialIcons name="close" size={24} />
+              </TouchableOpacity>
+              <Text style={{color: 'black', fontSize: 18, marginTop: 15}}>
+                Are you sure you want to logout ?
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  width: wp(60),
+                }}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(!modalVisible)}>
+                  <Text
+                    style={tw`text-blue-500 w-full font-bold text-center mt-8 text-lg`}>
+                    No
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => [
+                    AsyncStorage.removeItem('jwt'),
+                    logoutUser(context.dispatch),
+                  ]}>
+                  <Text
+                    style={tw`text-blue-500 w-full font-bold text-center mt-8 text-lg`}>
+                    yes
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>
     </View>
   );
 };
@@ -458,6 +459,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingBottom: 8,
     textAlign: 'center',
+    width: wp(65),
   },
   containerTel: {
     flexDirection: 'row',
@@ -539,7 +541,7 @@ const styles = StyleSheet.create({
   modalToggle: {
     alignItems: 'flex-end',
     marginTop: -25,
-    width: 200,
+    width: wp(39),
     marginRight: -150,
   },
   modalClose: {

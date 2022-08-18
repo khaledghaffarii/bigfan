@@ -18,6 +18,7 @@ import {
   Button,
   TextInput,
   ScrollView,
+  Modal,
 } from 'react-native';
 import {Card} from 'react-native-elements';
 import VideoPlayer from 'react-native-video';
@@ -27,12 +28,18 @@ import ToggleSwitch from 'toggle-switch-react-native';
 import AuthGlobal from '../../Context/store/AuthGlobal';
 import baseURL from '../../assets/common/baseUrl';
 import axios from 'axios';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import IconsScreen from 'react-native-vector-icons/MaterialCommunityIcons';
 // import {ScrollView} from 'react-native-gesture-handler';
 const Display = props => {
   const [userId, setUserId] = useState(false);
   const context = useContext(AuthGlobal);
   // console.log(context.stateUser.user.userId);
-
+  const [modalOpen, setModalOpen] = useState(false);
   const [resUri, setResUri] = useState(0);
   const ref = useRef();
   const Camera = useRef(null);
@@ -84,43 +91,11 @@ const Display = props => {
 
     //console.log(text);
   };
-  //console.log(userId)
+  console.log(userId);
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          marginLeft: 270,
-          marginTop: 10,
-          flexDirection: 'row',
-          alignContent: 'space-around',
-        }}>
-        {isEnabled ? (
-          <Text style={{margin: 5, fontWeight: 'bold'}}> Public</Text>
-        ) : (
-          <Text style={{margin: 5, fontWeight: 'bold'}}> Private</Text>
-        )}
-        <Switch
-          onValueChange={toggleSwitchButton}
-          value={isEnabled}
-          ios_backgroundColor="red"
-          trackColor={{false: 'red', true: 'green'}}
-          thumbColor={isEnabled ? 'green' : 'red'}
-        />
-      </View>
       <ScrollView style={{margin: 1, width: '100%'}}>
-        <View
-          style={{
-            width: '100%',
-          }}>
-          <TextInput
-            numberOfLines={5}
-            placeholder="what do you mean"
-            onChangeText={text => setText(text)}
-            // value={this.state.text}
-            style={{borderWidth: 1, borderColor: 'gray', margin: 10}}
-          />
-        </View>
-        <Card containerStyle={{padding: 0, width: '93%'}}>
+        {/* <Card containerStyle={{padding: 0, width: '93%'}}>
           <Image
             resizeMode={'center'}
             style={{
@@ -134,19 +109,21 @@ const Display = props => {
         </Card>
         {uriVideo ? (
           <Card containerStyle={{padding: 0}}>
-            <VideoPlayer
-              resizeMode="contain"
-              source={{
-                uri: uriVideo,
-              }}
-             // controls={true}
-              pictureInPicture={true}
-              playWhenInactive={true}
-              style={styles.backgroundVideo}
-              autoplay={false}
-              paused={false}
-              repeat={true}
-            />
+            <View style={{width: '100%'}}>
+              <VideoPlayer
+                resizeMode={'center'}
+                source={{
+                  uri: uriVideo,
+                }}
+                controls={true}
+                pictureInPicture={true}
+                playWhenInactive={true}
+                style={styles.backgroundVideo}
+                autoplay={false}
+                paused={false}
+                repeat={true}
+              />
+            </View>
           </Card>
         ) : (
           <Card containerStyle={{padding: 0}}>
@@ -167,6 +144,172 @@ const Display = props => {
             }}
             title="Send"
           />
+        </View> */}
+        <View
+          style={{
+            backgroundColor: 'white',
+            borderRadius: 14,
+            margin: wp(7.5),
+            marginTop: wp(30),
+            shadowColor: 'black',
+            shadowOffset: {
+              width: 0,
+              height: 7,
+            },
+            shadowOpacity: 0.41,
+            shadowRadius: 9.11,
+            elevation: 14,
+            width: wp(85),
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              marginTop: 10,
+              flexDirection: 'row',
+              width: wp(100),
+              position: 'relative',
+              right: -230,
+            }}>
+            {isEnabled ? (
+              <Text style={{margin: 5, fontWeight: 'bold'}}> Public</Text>
+            ) : (
+              <Text style={{margin: 5, fontWeight: 'bold'}}> Private</Text>
+            )}
+            <Switch
+              onValueChange={toggleSwitchButton}
+              value={isEnabled}
+              ios_backgroundColor="red"
+              trackColor={{false: 'red', true: 'green'}}
+              thumbColor={isEnabled ? 'green' : 'red'}
+            />
+          </View>
+          <View style={{width: '100%', height: 250}}>
+            <Image
+              source={{uri: uriImage}}
+              resizeMode={'cover'}
+              style={{
+                resizeMode: 'center',
+                width: '100%',
+                height: '100%',
+                borderTopLeftRadius: 14,
+                borderTopRightRadius: 14,
+
+                borderColor: 'lightgray',
+                borderWidth: 1,
+              }}
+            />
+          </View>
+          <View
+            style={{
+              width: '100%',
+              paddingHorizontal: 14,
+              marginTop: -24,
+              flexDirection: 'row',
+            
+            }}>
+            <TouchableOpacity
+            
+              style={{
+                flexDirection: 'row',
+              }}>
+              <VideoPlayer
+                source={{
+                  uri: uriVideo,
+                }}
+                autoplay={false}
+                paused={false}
+                repeat={true}
+                resizeMode="cover"
+                style={{
+                  width: 80,
+                  height: 80,
+                  marginLeft: 14,
+                  borderRadius: 200,
+                  borderColor: 'gray',
+                  borderWidth: 1,
+                }}
+              />
+            </TouchableOpacity>
+            <IconsScreen    onPress={() => setModalOpen(true)} style={{position:'absolute',left:90,top:59 }} color='black' name="fullscreen" size={25} />
+          </View>
+
+          <Modal
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.');
+              setModalOpen(!modalOpen);
+            }}
+            visible={modalOpen}
+            animationType="fade"
+            style={{
+              borderWidth: 2,
+              borderColor: 'red',
+            }}>
+            <TouchableOpacity
+              onPress={() => setModalOpen(false)}
+              style={{...styles.modalToggle, ...styles.modalClose}}>
+              <MaterialIcons name="close" size={24} />
+              <Text>close</Text>
+            </TouchableOpacity>
+
+            <View style={{width: '100%', alignItems: 'center', marginTop: 10}}>
+              <VideoPlayer
+                resizeMode="cover"
+                source={{
+                  uri: uriVideo,
+                }}
+                controls={true}
+                pictureInPicture={true}
+                playWhenInactive={true}
+                style={styles.backgroundVideo}
+                paused={false}
+                repeat={true}
+              />
+            </View>
+          </Modal>
+
+          <View style={{width: '100%', padding: 14}}>
+            <TextInput
+              numberOfLines={3}
+              placeholder="what do you mean"
+              onChangeText={text => setText(text)}
+              // value={this.state.text}
+              style={{
+                borderWidth: 1,
+                borderRadius: 10,
+                borderColor: 'lightgray',
+                margin: 10,
+              }}
+            />
+            <View
+              style={{
+                marginTop: 14,
+                width: wp(80),
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  addPost();
+                }}
+                style={{
+                  borderRadius: 24,
+                  backgroundColor: '#001F2D',
+
+                  minWidth: 120,
+                  padding: 12,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontFamily: 'InterMedium',
+                    color: 'white',
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                  }}>
+                  Confirm
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -185,7 +328,24 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   backgroundVideo: {
-    width: '100%',
+    width: 300,
     height: 300,
+    alignItems: 'center',
+  },
+  modalToggle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#f2f2f2',
+    padding: 10,
+    borderRadius: 10,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    width: 200,
+  },
+  modalClose: {
+    marginTop: 20,
+    marginBottom: 0,
   },
 });

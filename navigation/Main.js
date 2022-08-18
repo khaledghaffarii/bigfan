@@ -1,6 +1,6 @@
 import React, {useContext, useState, useCallback, useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-
+import Icon1 from 'react-native-vector-icons/EvilIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -37,74 +37,71 @@ const Main = () => {
   }, [context.stateUser.user.userId]);
   //console.log(context.stateUser.user.userId);
   return (
-    <>
-      <Tab.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          keyboardHidesTabBar: false,
-          showLabel: false,
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        keyboardHidesTabBar: false,
+        showLabel: true,
 
-          tabBarActiveTintColor: 'tomato',
-          tabBarShowLabel: false,
-          tabBarHideOnKeyboard: false,
-        }}>
-        <Tab.Screen
-          name="HomeNavigator"
-          component={HomeNavigator}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color}) => (
-              <Icon name="home" color={color} size={30} />
-            ),
-          }}
-        />
+        tabBarActiveTintColor: '#1E90FF',
+        tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
+      }}>
+      <Tab.Screen
+        name="HomeNavigator"
+        component={HomeNavigator}
+        options={{
         
+          headerShown: false,
+          tabBarIcon: ({color}) => <Icon name="home" color={color} size={30} />,
+        }}
+      />
+
+      <Tab.Screen
+        name="WhiteBoardNavigator"
+        component={WhiteBoardNavigator}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({color}) => (
+            <Icons name="library-add" color={color} size={30} />
+          ),
+        }}
+      />
+
+      {context.stateUser.isAuthenticated ? (
         <Tab.Screen
-          name="WhiteBoardNavigator"
-          component={WhiteBoardNavigator}
+          name="User"
+          component={UserNavigator}
           options={{
             headerShown: false,
             tabBarIcon: ({color}) => (
-              <Icons name="library-add" color={color} size={30} />
+              <View>
+                <Image
+                  source={{uri: userProfile.image}}
+                  style={{
+                    resizeMode: 'center',
+                    width: 40,
+                    height: 40,
+                    borderRadius: 300,
+                  }}
+                />
+              </View>
             ),
           }}
         />
-     
-        {context.stateUser.isAuthenticated  ? (
-          <Tab.Screen
-            name="User"
-            component={UserNavigator}
-            options={{
-              headerShown: false,
-              tabBarIcon: ({color}) => (
-                <View>
-                  <Image
-                    source={{uri: userProfile.image}}
-                    style={{
-                      resizeMode: 'center',
-                      width: 40,
-                      height: 40,
-                      borderRadius: 300,
-                    }}
-                  />
-                </View>
-              ),
-            }}
-          />
-        ) : (
-          <Tab.Screen
-            name="User"
-            component={UserNavigator}
-            options={{
-              headerShown: false,
-              tabBarIcon: ({color}) => (
-                <Icon name="user" color={color} size={30} />
-              ),
-            }}
-          />
-        )}
-      </Tab.Navigator>
-    </>
+      ) : (
+        <Tab.Screen
+          name="User"
+          component={UserNavigator}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({color}) => (
+              <Icon1 name="user" color={color} size={43} />
+            ),
+          }}
+        />
+      )}
+    </Tab.Navigator>
   );
 };
 
