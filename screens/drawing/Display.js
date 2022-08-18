@@ -91,7 +91,7 @@ const Display = props => {
 
     //console.log(text);
   };
-  console.log(userId);
+  // console.log(userId);
   return (
     <View style={styles.container}>
       <ScrollView style={{margin: 1, width: '100%'}}>
@@ -205,10 +205,8 @@ const Display = props => {
               paddingHorizontal: 14,
               marginTop: -24,
               flexDirection: 'row',
-            
             }}>
             <TouchableOpacity
-            
               style={{
                 flexDirection: 'row',
               }}>
@@ -230,7 +228,13 @@ const Display = props => {
                 }}
               />
             </TouchableOpacity>
-            <IconsScreen    onPress={() => setModalOpen(true)} style={{position:'absolute',left:90,top:59 }} color='black' name="fullscreen" size={25} />
+            <IconsScreen
+              onPress={() => setModalOpen(true)}
+              style={{position: 'absolute', left: 90, top: 59}}
+              color="black"
+              name="fullscreen"
+              size={25}
+            />
           </View>
 
           <Modal

@@ -90,15 +90,15 @@ const Register = props => {
     const image = await launchCamera(options);
     console.log(image);
     if (image.didCancel) {
-      console.log('User cancelled image picker');
+      // console.log('User cancelled image picker');
     } else if (image.error) {
-      console.log('ImagePicker Error: ', image.error);
+      // console.log('ImagePicker Error: ', image.error);
     } else if (image.customButton) {
-      console.log('User tapped custom button: ', image.customButton);
+      // console.log('User tapped custom button: ', image.customButton);
       alert(image.customButton);
     } else {
       const source = {uri: 'base64,' + image.data};
-      console.log('imageSource', JSON.stringify(source));
+      // console.log('imageSource', JSON.stringify(source));
 
       if (image.assets[0].uri) {
         setImage(image.assets[0].uri);
@@ -115,14 +115,14 @@ const Register = props => {
       },
     };
     await ImagePicker.launchImageLibrary(options, response => {
-      console.log('Response1 = ', response);
+      // console.log('Response1 = ', response);
 
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        // console.log('User cancelled image picker');
       } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
+        // console.log('ImagePicker Error: ', response.error);
       } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
+        // console.log('User tapped custom button: ', response.customButton);
         alert(response.customButton);
       } else {
         const source = response.assets[0].uri;
@@ -130,7 +130,7 @@ const Register = props => {
           '🚀 ~ file: Register.js ~ line 123 ~ launchImageLibrary ~ response.assets[0].uri',
           response.assets[0].uri.base64,
         );
-        console.log('responseSource', JSON.stringify(source.comource));
+        // console.log('responseSource', JSON.stringify(source.comource));
 
         if (response.assets[0].uri) {
           setImage(response.assets[0].uri);
@@ -162,7 +162,7 @@ const Register = props => {
           country: country,
           image: image,
         };
-        console.log(image.substr('file://'.length));
+        // console.log(image.substr('file://'.length));
 
         axios
           .post(`${baseURL}users/register`, user, {
